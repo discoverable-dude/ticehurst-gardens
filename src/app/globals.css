@@ -1,6 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-forest:  #1C3D2A;
+  --color-moss:    #2E6044;
+  --color-sage:    #5A9A6A;
+  --color-mid:     #7DBF8E;
+  --color-tlight:  #A8D5B5;
+  --color-mist:    #D4EDD9;
+  --color-foam:    #EDF7EF;
+  --color-cream:   #F4F1EC;
+  --color-pebble:  #E8E3DB;
+  --color-bark:    #7A6050;
+  --color-stone:   #B0A898;
+  --color-charcoal:#1A2218;
+}
 
 @layer base {
   html { scroll-behavior: smooth; }
@@ -10,9 +23,11 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
 @layer utilities {
   .font-head { font-family: 'Barlow Condensed', Impact, sans-serif; }
 }
+
 .wave-wrap { overflow: hidden; line-height: 0; }
 .wave-wrap svg { display: block; width: 100%; }
 details summary::-webkit-details-marker { display: none; }
