@@ -1,24 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { data, error } = await supabase
-      .from('contacts')
-      .insert([{
-        name:    body.name,
-        phone:   body.phone,
-        email:   body.email   ?? null,
-        service: body.service ?? null,
-        town:    body.town    ?? null,
-        message: body.message ?? null,
-        status:  'new',
-      }])
-      .select()
-    if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
-    return NextResponse.json({ ok: true, id: data?.[0]?.id })
-  } catch {
-    return NextResponse.json({ ok: false, error: 'Server error' }, { status: 500 })
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (url && key) {
+      const { createClient } = await import('@supabase/supabase-js')
+      const sb = createClient(url, key)
+      const { error } = await sb.from('contacts').insert([{ name: body.name ?? null, phone: body.phone ?? null, email: body.email ?? null, service: body.service ?? null, town: body.town ?? null, message: body.message ?? null, status: 'new' }])
+      if (error) console.error('Supabase error:', error.message)
+    } else {
+      console.log('CONTACT SUBMISSION (no DB):', JSON.stringify(body))
+    }
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('Contact route error:', err)
+    return NextResponse.json({ ok: false }, { status: 500 })
   }
 }

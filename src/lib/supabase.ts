@@ -1,52 +1,32 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const url  = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+let _client: SupabaseClient | null = null
 
-export const supabase = createClient(url, anon)
-
-// ── Types ──────────────────────────────────────────────────────
-export type ServiceCategory = 'gardening' | 'cleaning'
-
-export type QuoteSubmission = {
-  id?:              string
-  created_at?:      string
-  // Service
-  service:          string
-  category:         ServiceCategory
-  // Sizing
-  garden_size?:     string   // 'small' | 'medium' | 'large' | 'extra_large'
-  property_size?:   string   // for cleaning services
-  num_windows?:     number
-  num_panels?:      number
-  // Frequency
-  frequency?:       string   // 'one_off' | 'weekly' | 'fortnightly' | 'monthly' | 'quarterly'
-  // Extras
-  extras?:          string[]
-  // Location
-  town:             string
-  postcode?:        string
-  // Contact
-  name:             string
-  phone:            string
-  email?:           string
-  message?:         string
-  // Estimate
-  estimate_low?:    number
-  estimate_high?:   number
-  // Status
-  status:           'new' | 'contacted' | 'quoted' | 'booked' | 'declined'
-  source?:          string   // 'quote_tool' | 'contact_form'
+export function getSupabase(): SupabaseClient {
+  if (_client) return _client
+  const url  = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !anon) throw new Error('Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to Vercel env vars.')
+  _client = createClient(url, anon)
+  return _client
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const supabase = new Proxy({} as SupabaseClient, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get(_target, prop): any { return (getSupabase() as any)[prop] },
+})
+
+export type ServiceCategory = 'gardening' | 'cleaning'
+export type QuoteSubmission = {
+  id?: string; created_at?: string; service: string; category: ServiceCategory
+  garden_size?: string; frequency?: string; town: string; postcode?: string
+  name: string; phone: string; email?: string; message?: string
+  estimate_low?: number; estimate_high?: number
+  status: 'new' | 'contacted' | 'quoted' | 'booked' | 'declined'; source?: string
+}
 export type ContactSubmission = {
-  id?:         string
-  created_at?: string
-  name:        string
-  phone:       string
-  email?:      string
-  service?:    string
-  town?:       string
-  message?:    string
-  status:      'new' | 'contacted' | 'closed'
+  id?: string; created_at?: string; name: string; phone: string
+  email?: string; service?: string; town?: string; message?: string
+  status: 'new' | 'contacted' | 'closed'
 }
