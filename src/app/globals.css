@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', system-ui, sans-serif;
+    background-color: #F4F1EC;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+@layer utilities {
+  .font-head { font-family: 'Barlow Condensed', Impact, sans-serif; }
+}
+.wave-wrap { overflow: hidden; line-height: 0; }
+.wave-wrap svg { display: block; width: 100%; }
+details summary::-webkit-details-marker { display: none; }
