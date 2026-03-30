@@ -12,8 +12,9 @@ export async function generateStaticParams() {
   return SERVICES.map(s => ({ slug: s.slug }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const svc = getService(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const svc = getService(slug)
   if (!svc) return {}
   return {
     title: svc.title,
@@ -32,8 +33,9 @@ function Stars() {
   return <div className="flex gap-0.5">{Array.from({length:5}).map((_,i)=><span key={i} className="text-amber-400 text-[13px]">★</span>)}</div>
 }
 
-export default function ServicePage({ params }: { params: { slug: string } }) {
-  const svc = getService(params.slug)
+export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const svc = getService(slug)
   if (!svc) notFound()
 
   const related = SERVICES.filter(s => s.category === svc.category && s.slug !== svc.slug).slice(0, 3)
