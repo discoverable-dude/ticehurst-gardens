@@ -1,6 +1,5 @@
 import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
-  trailingSlash: true,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -11,10 +10,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/home',     destination: '/',          permanent: true },
-      { source: '/services', destination: '/services/', permanent: true },
       { source: '/gardens',  destination: '/services/garden-maintenance/', permanent: true },
-      { source: '/windows',  destination: '/services/window-cleaning/',   permanent: true },
-      { source: '/gutters',  destination: '/services/gutter-clearing/',   permanent: true },
+      { source: '/windows',  destination: '/services/window-cleaning/',    permanent: true },
+      { source: '/gutters',  destination: '/services/gutter-clearing/',    permanent: true },
     ]
   },
 }
