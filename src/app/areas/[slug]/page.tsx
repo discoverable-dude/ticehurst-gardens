@@ -6,6 +6,8 @@ import Wave from '@/components/Wave'
 import Link from 'next/link'
 import { LOCATIONS, getLocation } from '@/lib/locations'
 import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { GallerySection } from '@/components/Gallery'
 
 export async function generateStaticParams() {
   return LOCATIONS.map(l => ({ slug: l.slug }))
@@ -134,34 +136,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest to-sage" />
               <h2 className="font-head font-black text-lg uppercase tracking-wide text-forest mb-1">Free Quote in {loc.name}</h2>
               <p className="text-sm text-bark mb-4">No obligation — Andy visits to give you a fixed price.</p>
-              <form className="space-y-3" action="/contact/thanks" method="POST">
-                <input type="hidden" name="town" value={loc.name} />
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Name *</label>
-                    <input name="name" required placeholder="Your name" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Phone *</label>
-                    <input name="phone" type="tel" required placeholder="07XXX XXXXXX" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Service needed</label>
-                  <select name="service" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors">
-                    <option value="">Select a service…</option>
-                    {ALL_SERVICES.map(s=><option key={s.name}>{s.name}</option>)}
-                    <option>Multiple services</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Tell us more</label>
-                  <textarea name="message" rows={2} placeholder="Any extra details…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors resize-none" />
-                </div>
-                <button type="submit" className="w-full bg-forest text-white font-head font-black text-sm uppercase tracking-wider py-3.5 rounded-full hover:bg-moss transition-all">
-                  Send message
-                </button>
-              </form>
+              <ContactForm town={loc.name} variant="area" />
             </div>
           </div>
         </div>
@@ -198,7 +173,22 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <Wave fromColor="#F4F1EC" toColor="#1C3D2A" path="M0,30 C320,68 680,0 1040,50 C1220,65 1360,20 1440,30 L1440,68 L0,68 Z" height={68} />
+      {/* Gallery */}
+      <GallerySection
+        subheading={`Work in ${loc.name}`}
+        heading={`Our Projects in ${loc.name}`}
+        description={`Recent garden maintenance and exterior cleaning work in ${loc.name} — photos coming soon.`}
+        count={4}
+        columns={2}
+        labels={[
+          `Garden work in ${loc.name}`,
+          `Exterior cleaning in ${loc.name}`,
+          `Before & after`,
+          `Finished result`,
+        ]}
+      />
+
+      <Wave fromColor="#FFFFFF" toColor="#1C3D2A" path="M0,30 C320,68 680,0 1040,50 C1220,65 1360,20 1440,30 L1440,68 L0,68 Z" height={68} />
 
       {/* All services in this location */}
       <section className="bg-forest py-14">

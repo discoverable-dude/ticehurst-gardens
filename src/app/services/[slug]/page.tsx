@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { SERVICES, getService } from '@/lib/services'
 import { LOCATIONS } from '@/lib/locations'
 import { CheckCircle2, ChevronRight, ArrowRight, MapPin } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { GallerySection } from '@/components/Gallery'
 
 export async function generateStaticParams() {
   return SERVICES.map(s => ({ slug: s.slug }))
@@ -138,35 +140,29 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest to-sage" />
             <h2 className="font-head font-black text-lg uppercase tracking-wide text-forest mb-1">Get a Quote for {svc.name}</h2>
             <p className="text-sm text-bark mb-4">Free, no-obligation. We&apos;ll visit and give you a firm price.</p>
-            <form className="space-y-3" action="/contact/thanks" method="POST">
-              <input type="hidden" name="service" value={svc.name} />
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Name *</label>
-                  <input name="name" required placeholder="Your name" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Phone *</label>
-                  <input name="phone" type="tel" required placeholder="07XXX XXXXXX" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Your town</label>
-                <input name="town" placeholder="e.g. Ashford, Tenterden…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Tell us about your project</label>
-                <textarea name="message" rows={3} placeholder="Describe what you need help with…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors resize-none" />
-              </div>
-              <button type="submit" className="w-full bg-forest text-white font-head font-black text-sm uppercase tracking-wider py-3.5 rounded-full hover:bg-moss transition-all">
-                Send message
-              </button>
-            </form>
+            <ContactForm service={svc.name} variant="service" />
           </div>
         </div>
       </section>
 
       <Wave fromColor="#F4F1EC" toColor="#FFFFFF" />
+
+      {/* Gallery */}
+      <GallerySection
+        subheading={`${svc.name} gallery`}
+        heading={`${svc.name} — Our Work`}
+        description={`Recent ${svc.name.toLowerCase()} projects across Kent & East Sussex — photos coming soon.`}
+        count={4}
+        columns={2}
+        labels={[
+          `${svc.name} — before`,
+          `${svc.name} — after`,
+          `${svc.name} in progress`,
+          `Finished result`,
+        ]}
+      />
+
+      <Wave fromColor="#FFFFFF" toColor="#FFFFFF" />
 
       {/* FAQ */}
       <section className="bg-white py-14">

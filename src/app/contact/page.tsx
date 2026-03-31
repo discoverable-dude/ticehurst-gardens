@@ -3,6 +3,7 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import { Mail, ExternalLink } from "lucide-react"
+import ContactForm from '@/components/ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contact Us — Free Quotes | Ticehurst Grounds & Gardens',
@@ -91,48 +92,7 @@ export default function ContactPage() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest to-sage" />
               <h2 className="font-head font-black text-xl uppercase tracking-wide text-forest mb-1">Send a Message</h2>
               <p className="text-sm text-bark mb-6">We&apos;ll get back to you within 24 hours.</p>
-              <form className="space-y-4" action="/contact/thanks" method="POST">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Your name *</label>
-                    <input name="name" required placeholder="Your name" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Phone *</label>
-                    <input name="phone" type="tel" required placeholder="07XXX XXXXXX" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Email</label>
-                  <input name="email" type="email" placeholder="you@email.com" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Service needed</label>
-                  <select name="service" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors">
-                    <option value="">Select a service…</option>
-                    <optgroup label="Gardening">
-                      {['Lawn Care','Garden Maintenance','Hedge & Tree Care','Garden Clearance','Border & Bed Design','Fencing'].map(o=><option key={o}>{o}</option>)}
-                    </optgroup>
-                    <optgroup label="Exterior Cleaning">
-                      {['Window Cleaning','Gutter Clearing','Solar Panel Cleaning','Jet Washing','Building & Cladding Cleaning','Conservatory Cleaning'].map(o=><option key={o}>{o}</option>)}
-                    </optgroup>
-                    <option>Multiple services</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Your town / area</label>
-                  <input name="town" placeholder="e.g. Ashford, Tenterden…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Tell us about your project</label>
-                  <textarea name="message" rows={4} placeholder="Describe what you need help with…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors resize-none" />
-                </div>
-                <button type="submit" className="w-full bg-forest text-white font-head font-black text-sm uppercase tracking-wider py-4 rounded-full hover:bg-moss transition-all flex items-center justify-center gap-2">
-                  <Mail size={15} strokeWidth={2} />
-                  Send message
-                </button>
-                <p className="text-center text-[11px] text-stone">We&apos;ll get back to you within 24 hours. No spam, ever.</p>
-              </form>
+              <ContactForm variant="contact" />
             </div>
           </div>
         </div>

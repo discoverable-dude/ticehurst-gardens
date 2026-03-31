@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/quote/`,    priority: 0.9, changeFrequency: 'monthly' },
     { url: `${BASE}/contact/`,  priority: 0.8, changeFrequency: 'monthly' },
     { url: `${BASE}/about/`,    priority: 0.5, changeFrequency: 'yearly'  },
+    { url: `${BASE}/reviews/`,  priority: 0.7, changeFrequency: 'monthly' },
   ]
   const services: MetadataRoute.Sitemap = SERVICES.map(s => ({
     url: `${BASE}/services/${s.slug}/`, priority: 0.85, changeFrequency: 'monthly',

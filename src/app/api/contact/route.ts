@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fireWebhooks } from '@/lib/webhooks'
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -12,6 +14,7 @@ export async function POST(req: NextRequest) {
     } else {
       console.log('CONTACT SUBMISSION (no DB):', JSON.stringify(body))
     }
+    await fireWebhooks('contact', body)
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Contact route error:', err)

@@ -4,6 +4,7 @@ import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
 import { Star, ArrowRight } from 'lucide-react'
+import { GallerySection } from '@/components/Gallery'
 
 export const metadata: Metadata = {
   title: 'About Us | Ticehurst Grounds & Gardens',
@@ -113,6 +114,25 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <Wave fromColor="#FFFFFF" toColor="#FFFFFF" />
+
+      {/* Gallery */}
+      <GallerySection
+        subheading="Our work"
+        heading="The Team in Action"
+        description="Photos of our team at work across Kent & East Sussex — coming soon."
+        count={6}
+        columns={3}
+        labels={[
+          'Garden transformation',
+          'Lawn maintenance',
+          'Hedge trimming',
+          'Jet washing results',
+          'Window cleaning',
+          'The team on site',
+        ]}
+      />
 
       <Footer />
     </>

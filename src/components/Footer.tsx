@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Wave from './Wave'
 
 const GARDENING: [string, string][] = [
@@ -36,9 +37,18 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
             <div>
-              <Link href="/" className="block mb-3">
-                <div className="font-head font-black text-xl uppercase tracking-wider text-white leading-none">Ticehurst</div>
-                <div className="font-head font-bold text-[11px] uppercase tracking-[0.14em] text-sage">Grounds &amp; Gardens</div>
+              <Link href="/" className="flex items-center gap-2.5 mb-3">
+                <Image
+                  src="/logo-icon.png"
+                  alt=""
+                  width={36}
+                  height={36}
+                  className="w-9 h-9 object-contain brightness-0 invert"
+                />
+                <div>
+                  <div className="font-head font-black text-xl uppercase tracking-wider text-white leading-none">Ticehurst</div>
+                  <div className="font-head font-bold text-[11px] uppercase tracking-[0.14em] text-sage">Grounds &amp; Gardens</div>
+                </div>
               </Link>
               <p className="text-sm text-tlight/50 leading-relaxed mb-5">Professional garden maintenance and exterior cleaning across Kent &amp; East Sussex.</p>
               <div className="flex flex-col gap-2 text-[12.5px]">
@@ -64,6 +74,12 @@ export default function Footer() {
               <nav aria-label="Service areas"><ul className="flex flex-col gap-2">
                 {AREAS.map(([label, href]) => <li key={href}><Link href={href} className="text-[12.5px] text-tlight/50 hover:text-tlight transition-colors">{label}</Link></li>)}
                 <li><Link href="/areas/" className="text-[12.5px] text-sage/70 hover:text-sage transition-colors">View all areas →</Link></li>
+              </ul></nav>
+              <p className="font-head font-bold text-[11px] uppercase tracking-[0.12em] text-sage mb-3 mt-6">Company</p>
+              <nav aria-label="Company links"><ul className="flex flex-col gap-2">
+                <li><Link href="/reviews/" className="text-[12.5px] text-tlight/50 hover:text-tlight transition-colors">Customer Reviews</Link></li>
+                <li><Link href="/about/" className="text-[12.5px] text-tlight/50 hover:text-tlight transition-colors">About Us</Link></li>
+                <li><Link href="/contact/" className="text-[12.5px] text-tlight/50 hover:text-tlight transition-colors">Contact</Link></li>
               </ul></nav>
             </div>
           </div>
