@@ -33,7 +33,8 @@ export default function AdminPage() {
       setAuthed(true)
       setHooks(await res.json())
     } else {
-      setError('Invalid password')
+      const body = await res.json().catch(() => null)
+      setError(res.status === 401 ? 'Invalid password' : body?.error || `Error ${res.status}`)
     }
   }
 
