@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 function authorized(req: NextRequest): boolean {
   const pw = process.env.ADMIN_PASSWORD
-  if (!pw) return false
   const auth = req.headers.get('authorization')
+  console.log('ADMIN_PASSWORD set:', !!pw, 'length:', pw?.length, 'auth header:', auth?.substring(0, 10))
+  if (!pw) return false
   return auth === `Bearer ${pw}`
 }
 
