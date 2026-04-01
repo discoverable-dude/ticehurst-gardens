@@ -1,4 +1,6 @@
+import Image from 'next/image'
 import { ImageIcon } from 'lucide-react'
+import type { Photo } from '@/lib/photos'
 
 /* ── Single placeholder tile ──────────────────────────────── */
 
@@ -36,12 +38,56 @@ export function ImagePlaceholder({
   )
 }
 
+/* ── Before / After card ─────────────────────────────────── */
+
+export function BeforeAfterCard({
+  before,
+  after,
+  dark = false,
+}: {
+  before: Photo
+  after: Photo
+  dark?: boolean
+}) {
+  return (
+    <div className={`rounded-xl border overflow-hidden ${dark ? 'border-white/10' : 'border-pebble'}`}>
+      <div className="grid grid-cols-2">
+        <div className="relative">
+          <Image
+            src={before.url}
+            alt={before.alt || 'Before'}
+            width={600}
+            height={400}
+            className="w-full aspect-[4/3] object-cover"
+          />
+          <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-bold font-head uppercase tracking-wider px-2 py-1 rounded">
+            Before
+          </span>
+        </div>
+        <div className="relative">
+          <Image
+            src={after.url}
+            alt={after.alt || 'After'}
+            width={600}
+            height={400}
+            className="w-full aspect-[4/3] object-cover"
+          />
+          <span className="absolute bottom-2 left-2 bg-green-700/80 text-white text-[10px] font-bold font-head uppercase tracking-wider px-2 py-1 rounded">
+            After
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ── Gallery section — drop-in on any page ────────────────── */
 
 export function GallerySection({
   heading = 'Our Work',
   subheading = 'Gallery',
-  description = 'Photos of recent projects — coming soon.',
+  description = 'Photos of recent projects.',
+  images,
   count = 6,
   columns = 3,
   dark = false,
@@ -50,6 +96,7 @@ export function GallerySection({
   heading?: string
   subheading?: string
   description?: string
+  images?: Photo[]
   count?: number
   columns?: 2 | 3 | 4
   dark?: boolean
@@ -61,6 +108,21 @@ export function GallerySection({
       : columns === 2
         ? 'grid-cols-1 sm:grid-cols-2'
         : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+
+  // Split images into before/after pairs and regular work photos
+  const workPhotos = images?.filter(p => p.category === 'work') ?? []
+  const beforePhotos = images?.filter(p => p.category === 'before') ?? []
+  const afterPhotos = images?.filter(p => p.category === 'after') ?? []
+
+  // Build before/after pairs by pair_id
+  const pairs: { before: Photo; after: Photo }[] = []
+  for (const b of beforePhotos) {
+    if (!b.pair_id) continue
+    const a = afterPhotos.find(p => p.pair_id === b.pair_id)
+    if (a) pairs.push({ before: b, after: a })
+  }
+
+  const hasImages = workPhotos.length > 0 || pairs.length > 0
 
   return (
     <section className={dark ? 'bg-forest py-16' : 'bg-white py-16'}>
@@ -86,15 +148,43 @@ export function GallerySection({
         >
           {description}
         </p>
-        <div className={`grid ${colClass} gap-4`}>
-          {Array.from({ length: count }).map((_, i) => (
-            <ImagePlaceholder
-              key={i}
-              label={labels?.[i]}
-              dark={dark}
-            />
-          ))}
-        </div>
+
+        {/* Before/After pairs */}
+        {pairs.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            {pairs.map(p => (
+              <BeforeAfterCard key={p.before.id} before={p.before} after={p.after} dark={dark} />
+            ))}
+          </div>
+        )}
+
+        {/* Work photos grid */}
+        {hasImages ? (
+          <div className={`grid ${colClass} gap-4`}>
+            {workPhotos.map(photo => (
+              <div key={photo.id} className={`rounded-xl overflow-hidden border ${dark ? 'border-white/10' : 'border-pebble'}`}>
+                <Image
+                  src={photo.url}
+                  alt={photo.alt}
+                  width={600}
+                  height={450}
+                  className="w-full aspect-[4/3] object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={`grid ${colClass} gap-4`}>
+            {Array.from({ length: count }).map((_, i) => (
+              <ImagePlaceholder
+                key={i}
+                label={labels?.[i]}
+                dark={dark}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Leaf, Sprout, TreePine, Trash2, Flower2, Fence,
   Square, Home as HomeIcon, Sun, Zap, Building2, Triangle,
@@ -78,13 +79,33 @@ function Stars() {
   return <div className="flex gap-0.5">{Array.from({length:5}).map((_,i)=><Star key={i} size={13} className="fill-amber-400 text-amber-500" strokeWidth={0.5} />)}</div>
 }
 
-export default function HomeContent() {
+export default function HomeContent({
+  heroImage,
+  aboutImage,
+}: {
+  heroImage?: string
+  aboutImage?: { url: string; alt: string }
+}) {
   return (
     <>
       <Nav />
 
       {/* ── HERO ── */}
       <header className="bg-forest overflow-hidden relative">
+        {/* Hero background image */}
+        {heroImage && (
+          <>
+            <Image
+              src={heroImage}
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-forest/80" />
+          </>
+        )}
         {/* Radial glow */}
         <div className="absolute inset-0 pointer-events-none" style={{background:'radial-gradient(circle at 72% 28%,rgba(90,154,106,.14),transparent 55%)'}} />
         {/* Subtle floating accent */}
@@ -250,7 +271,17 @@ export default function HomeContent() {
           </div>
           <FadeIn delay={0.2}>
             <div className="bg-forest rounded-2xl aspect-[4/5] flex items-center justify-center relative overflow-hidden">
-              <p className="text-tlight/60 font-head text-lg text-center px-10">Professional garden &amp; grounds care across Kent</p>
+              {aboutImage ? (
+                <Image
+                  src={aboutImage.url}
+                  alt={aboutImage.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              ) : (
+                <p className="text-tlight/60 font-head text-lg text-center px-10">Professional garden &amp; grounds care across Kent</p>
+              )}
               <motion.div
                 className="absolute bottom-4 -right-2 bg-white rounded-xl p-4 flex gap-3 items-center shadow-2xl"
                 initial={{ opacity: 0, x: 40 }}

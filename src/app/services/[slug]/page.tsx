@@ -9,6 +9,7 @@ import { LOCATIONS } from '@/lib/locations'
 import { CheckCircle2, ChevronRight, ArrowRight, MapPin } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
+import { getServicePhotos } from '@/lib/photos'
 
 export async function generateStaticParams() {
   return SERVICES.map(s => ({ slug: s.slug }))
@@ -42,6 +43,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   const related = SERVICES.filter(s => s.category === svc.category && s.slug !== svc.slug).slice(0, 3)
   const catLabel = svc.category === 'gardening' ? 'Gardening Service' : 'Exterior Cleaning'
+  const photos = await getServicePhotos(slug)
 
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
@@ -151,7 +153,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <GallerySection
         subheading={`${svc.name} gallery`}
         heading={`${svc.name} — Our Work`}
-        description={`Recent ${svc.name.toLowerCase()} projects across Kent & East Sussex — photos coming soon.`}
+        description={`Recent ${svc.name.toLowerCase()} projects across Kent & East Sussex.`}
+        images={photos}
         count={4}
         columns={2}
         labels={[
