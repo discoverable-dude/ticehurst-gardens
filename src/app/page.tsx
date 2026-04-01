@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import HomeContent from '@/components/HomeContent'
 import { getPhotosByCategory } from '@/lib/photos'
+import { getPageContent, getReviews } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Ticehurst Grounds & Gardens | Gardeners & Exterior Cleaning in Kent & East Sussex',
@@ -43,9 +44,11 @@ const LOCAL_BUSINESS_SCHEMA = JSON.stringify({
 })
 
 export default async function Home() {
-  const [heroPhotos, aboutPhotos] = await Promise.all([
+  const [heroPhotos, aboutPhotos, homeContent, reviews] = await Promise.all([
     getPhotosByCategory('hero'),
     getPhotosByCategory('about'),
+    getPageContent('home'),
+    getReviews(),
   ])
 
   return (
@@ -57,6 +60,8 @@ export default async function Home() {
       <HomeContent
         heroImage={heroPhotos[0]?.url}
         aboutImage={aboutPhotos[0] ? { url: aboutPhotos[0].url, alt: aboutPhotos[0].alt } : undefined}
+        cms={homeContent}
+        reviews={reviews}
       />
     </>
   )

@@ -13,6 +13,8 @@ import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import { AnimatedGroup, AnimatedItem, FadeIn, HoverLift } from '@/components/motion'
 import ContactForm from '@/components/ContactForm'
+import { HOME_DEFAULTS } from '@/lib/defaults/home'
+import { DEFAULT_REVIEWS, type Review } from '@/lib/defaults/reviews'
 
 const GARD = [
   { icon: Leaf,     title: 'Lawn Care',           desc: 'Mowing, aeration, scarification, seeding & seasonal treatments.',   href: '/services/lawn-care/' },
@@ -82,10 +84,26 @@ function Stars() {
 export default function HomeContent({
   heroImage,
   aboutImage,
+  cms,
+  reviews: reviewsProp,
 }: {
   heroImage?: string
   aboutImage?: { url: string; alt: string }
+  cms?: Record<string, unknown>
+  reviews?: Review[]
 }) {
+  // Merge CMS data with defaults
+  const hero = (cms?.hero ?? HOME_DEFAULTS.hero) as Record<string, unknown>
+  const stats = (cms?.stats ?? HOME_DEFAULTS.stats) as Array<{ n: string; l: string }>
+  const gardIntro = (cms?.gardening_intro ?? HOME_DEFAULTS.gardening_intro) as Record<string, string>
+  const cleanIntro = (cms?.cleaning_intro ?? HOME_DEFAULTS.cleaning_intro) as Record<string, string>
+  const whyUs = (cms?.why_us ?? HOME_DEFAULTS.why_us) as Record<string, unknown>
+  const whyUsItems = (whyUs.items ?? []) as Array<{ n: string; t: string; d: string }>
+  const process = (cms?.process ?? HOME_DEFAULTS.process) as Record<string, unknown>
+  const processSteps = (process.steps ?? []) as Array<{ n: number; t: string; d: string }>
+  const faq = (cms?.faq ?? HOME_DEFAULTS.faq) as Record<string, unknown>
+  const faqItems = (faq.items ?? []) as Array<{ q: string; a: string }>
+  const homeReviews = reviewsProp?.slice(0, 6) ?? REVIEWS.map(r => ({ quote: r.q, name: r.name, location: r.loc }))
   return (
     <>
       <Nav />
@@ -197,7 +215,7 @@ export default function HomeContent({
       <div className="bg-moss">
         <div className="max-w-6xl mx-auto px-6">
           <AnimatedGroup className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
-            {[{n:'200+',l:'Gardens maintained'},{n:'6+',l:'Years in Kent'},{n:'5\u2605',l:'Customer rating'},{n:'12',l:'Areas covered'}].map((s,i)=>(
+            {stats.map((s,i)=>(
               <AnimatedItem key={i}>
                 <div className="text-center py-7 px-5">
                   <div className="font-head font-black text-4xl text-mid leading-none mb-1">{s.n}</div>
@@ -215,9 +233,9 @@ export default function HomeContent({
       <section id="gardening" className="bg-cream py-20">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn>
-            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">Gardening services</p>
-            <h2 className="font-head font-black text-[clamp(28px,4vw,46px)] uppercase tracking-wide text-forest leading-none mb-4">Gardening &amp; Grounds Care</h2>
-            <p className="text-bark text-[15px] leading-relaxed max-w-2xl mb-10">From weekly lawn care to full garden clearances — professional gardening across Kent &amp; East Sussex.</p>
+            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">{gardIntro.subtitle}</p>
+            <h2 className="font-head font-black text-[clamp(28px,4vw,46px)] uppercase tracking-wide text-forest leading-none mb-4">{gardIntro.heading}</h2>
+            <p className="text-bark text-[15px] leading-relaxed max-w-2xl mb-10">{gardIntro.description}</p>
           </FadeIn>
           <AnimatedGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {GARD.map(s=><SvcCard key={s.href} {...s} />)}
@@ -231,9 +249,9 @@ export default function HomeContent({
       <section id="cleaning" className="bg-forest py-20">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn>
-            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-tlight mb-2">Exterior cleaning services</p>
-            <h2 className="font-head font-black text-[clamp(28px,4vw,46px)] uppercase tracking-wide text-white leading-none mb-4">Exterior Cleaning</h2>
-            <p className="text-tlight text-[15px] leading-relaxed max-w-2xl mb-10">Window cleaning, gutter clearing, solar panels, jet washing, building &amp; cladding — the complete exterior cleaning service.</p>
+            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-tlight mb-2">{cleanIntro.subtitle}</p>
+            <h2 className="font-head font-black text-[clamp(28px,4vw,46px)] uppercase tracking-wide text-white leading-none mb-4">{cleanIntro.heading}</h2>
+            <p className="text-tlight text-[15px] leading-relaxed max-w-2xl mb-10">{cleanIntro.description}</p>
           </FadeIn>
           <AnimatedGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {CLEAN.map(s=><SvcCard key={s.href} {...s} dark />)}
@@ -248,16 +266,12 @@ export default function HomeContent({
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
           <div>
             <FadeIn>
-              <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">Why Ticehurst</p>
-              <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-5">Your Local Kent &amp; East Sussex Experts</h2>
-              <p className="text-bark text-[15px] leading-relaxed mb-7">A friendly, professional multi-team business covering both garden maintenance and exterior cleaning.</p>
+              <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">{whyUs.subtitle as string}</p>
+              <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-5">{whyUs.heading as string}</h2>
+              <p className="text-bark text-[15px] leading-relaxed mb-7">{whyUs.description as string}</p>
             </FadeIn>
             <AnimatedGroup className="flex flex-col gap-4">
-              {[{n:'01',t:'Genuinely local',d:'Based in Kent, working across Kent and East Sussex. We know local gardens, soils and conditions.'},
-                {n:'02',t:'One team, two services',d:'Garden maintenance and exterior cleaning from the same trusted team.'},
-                {n:'03',t:'Multi-person teams',d:'More hands, faster results — professional teams that deliver without cutting corners.'},
-                {n:'04',t:'Honest pricing',d:'Free, no-obligation quotes. Clear, transparent pricing — no hidden costs, ever.'},
-              ].map(w=>(
+              {whyUsItems.map(w=>(
                 <AnimatedItem key={w.n}>
                   <HoverLift y={-3}>
                     <div className="flex gap-4 bg-cream border border-pebble rounded-xl p-4 hover:border-sage/40 hover:shadow-md transition-all duration-200">
@@ -318,14 +332,14 @@ export default function HomeContent({
             <p className="text-bark text-[15px] mb-9">Trusted by homeowners and businesses across Kent &amp; East Sussex.</p>
           </FadeIn>
           <AnimatedGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {REVIEWS.map((r,i)=>(
+            {homeReviews.map((r,i)=>(
               <AnimatedItem key={i}>
                 <HoverLift y={-4}>
                   <article className="bg-cream border border-pebble rounded-xl p-5 flex flex-col gap-3 relative hover:border-sage/30 hover:shadow-lg transition-all duration-200 h-full">
                     <span className="absolute top-3 right-4 text-5xl text-mist font-serif leading-none select-none">&ldquo;</span>
                     <Stars />
-                    <blockquote className="text-[14px] text-charcoal leading-relaxed italic flex-1">&ldquo;{r.q}&rdquo;</blockquote>
-                    <div><p className="font-head font-bold uppercase tracking-wide text-forest text-[13px]">{r.name}</p><p className="text-[12px] text-sage font-medium">{r.loc}</p></div>
+                    <blockquote className="text-[14px] text-charcoal leading-relaxed italic flex-1">&ldquo;{r.quote}&rdquo;</blockquote>
+                    <div><p className="font-head font-bold uppercase tracking-wide text-forest text-[13px]">{r.name}</p><p className="text-[12px] text-sage font-medium">{r.location}</p></div>
                   </article>
                 </HoverLift>
               </AnimatedItem>
@@ -365,11 +379,11 @@ export default function HomeContent({
       <section className="bg-white py-20">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn>
-            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">Simple to get started</p>
-            <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-10">How It Works</h2>
+            <p className="font-head font-bold text-sm uppercase tracking-[0.18em] text-sage mb-2">{process.subtitle as string}</p>
+            <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-10">{process.heading as string}</h2>
           </FadeIn>
           <AnimatedGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[{n:1,t:'Get in touch',d:'WhatsApp Andy or message via Instagram.'},{n:2,t:'Free site visit',d:'We visit and give you a free, no-obligation quote.'},{n:3,t:'We get to work',d:'Professional team, fully equipped — exceptional results.'},{n:4,t:'Enjoy the result',d:'Beautiful garden, sparkling windows, clear gutters.'}].map(s=>(
+            {processSteps.map(s=>(
               <AnimatedItem key={s.n}>
                 <div className="text-center group">
                   <motion.div
@@ -392,16 +406,10 @@ export default function HomeContent({
       <section className="bg-cream py-20">
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn>
-            <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-10 text-center">Frequently Asked Questions</h2>
+            <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-forest leading-none mb-10 text-center">{faq.heading as string}</h2>
           </FadeIn>
           <AnimatedGroup className="max-w-3xl mx-auto flex flex-col gap-3">
-            {[
-              {q:'What areas do you cover?',a:'Ashford, Tenterden, Cranbrook, Headcorn, Maidstone, Folkestone, Tonbridge and Tunbridge Wells in Kent, plus Rye, Battle, Hastings and Bexhill in East Sussex.'},
-              {q:'Do you clean solar panels in Kent?',a:'Yes. Dirty panels lose 15\u201330% efficiency. We use a pure water system — no chemicals, streak-free results.'},
-              {q:'Can you handle gardening and cleaning on the same visit?',a:'Absolutely. Our multi-team operation means we can tackle your lawn, hedges, gutters and windows in one visit.'},
-              {q:'Do you offer regular contracts?',a:'Yes — weekly, fortnightly or monthly for both garden maintenance and exterior cleaning.'},
-              {q:'Are your quotes free?',a:"Yes. All quotes are free and no-obligation. WhatsApp Andy or message via Instagram and we'll visit to provide an honest estimate."},
-            ].map((f,i)=>(
+            {faqItems.map((f,i)=>(
               <AnimatedItem key={i}>
                 <details className="bg-white border border-pebble rounded-xl overflow-hidden group hover:border-sage/40 transition-colors">
                   <summary className="flex justify-between items-center px-5 py-4 cursor-pointer font-head font-bold text-[15px] tracking-wide text-forest hover:bg-foam transition-colors list-none">

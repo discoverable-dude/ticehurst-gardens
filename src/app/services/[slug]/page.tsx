@@ -4,7 +4,8 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
-import { SERVICES, getService } from '@/lib/services'
+import { SERVICES } from '@/lib/services'
+import { getCmsService, getAllServices } from '@/lib/cms'
 import { LOCATIONS } from '@/lib/locations'
 import { CheckCircle2, ChevronRight, ArrowRight, MapPin } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
@@ -12,12 +13,13 @@ import { GallerySection } from '@/components/Gallery'
 import { getServicePhotos } from '@/lib/photos'
 
 export async function generateStaticParams() {
-  return SERVICES.map(s => ({ slug: s.slug }))
+  const services = await getAllServices()
+  return services.map(s => ({ slug: s.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const svc = getService(slug)
+  const svc = await getCmsService(slug)
   if (!svc) return {}
   return {
     title: svc.title,
@@ -38,7 +40,7 @@ function Stars() {
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const svc = getService(slug)
+  const svc = await getCmsService(slug)
   if (!svc) notFound()
 
   const related = SERVICES.filter(s => s.category === svc.category && s.slug !== svc.slug).slice(0, 3)

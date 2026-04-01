@@ -4,18 +4,20 @@ import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
-import { LOCATIONS, getLocation } from '@/lib/locations'
+import { LOCATIONS } from '@/lib/locations'
+import { getCmsLocation, getAllLocations } from '@/lib/cms'
 import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
 
 export async function generateStaticParams() {
-  return LOCATIONS.map(l => ({ slug: l.slug }))
+  const locations = await getAllLocations()
+  return locations.map(l => ({ slug: l.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const loc = getLocation(slug)
+  const loc = await getCmsLocation(slug)
   if (!loc) return {}
   return {
     title: `Garden Maintenance & Exterior Cleaning in ${loc.name}, ${loc.county}`,
@@ -51,7 +53,7 @@ function Stars() {
 
 export default async function AreaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const loc = getLocation(slug)
+  const loc = await getCmsLocation(slug)
   if (!loc) notFound()
 
   const nearbyLocations = LOCATIONS.filter(l => loc.nearby.includes(l.slug))

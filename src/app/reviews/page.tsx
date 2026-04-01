@@ -5,6 +5,7 @@ import Wave from '@/components/Wave'
 import Link from 'next/link'
 import { Star, ArrowRight, MapPin, CheckCircle2 } from 'lucide-react'
 import { GallerySection } from '@/components/Gallery'
+import { getReviews } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Customer Reviews | Ticehurst Grounds & Gardens',
@@ -15,20 +16,7 @@ export const metadata: Metadata = {
   },
 }
 
-const REVIEWS = [
-  { q: 'Andy and his team transformed our overgrown garden. Incredibly professional, reliable and great value.', name: 'Sarah M.', loc: 'Ashford, Kent', service: 'Garden Clearance' },
-  { q: 'Used Ticehurst for lawn maintenance for over a year. Always on time, always brilliant results.', name: 'James T.', loc: 'Tenterden, Kent', service: 'Lawn Care' },
-  { q: 'The exterior window and conservatory cleaning was outstanding. Would definitely recommend.', name: 'Rachel B.', loc: 'Headcorn, Kent', service: 'Window & Conservatory Cleaning' },
-  { q: 'Hedges cut, patio jet washed and gutters cleared in one visit. Excellent work at a fair price.', name: 'Linda R.', loc: 'Rye, East Sussex', service: 'Multiple Services' },
-  { q: 'Full garden clearance — completely overgrown and now it looks incredible. Fast, friendly and professional.', name: 'David K.', loc: 'Cranbrook, Kent', service: 'Garden Clearance' },
-  { q: 'Reliable, hardworking, results speak for themselves. Our garden is always immaculate. Great team.', name: 'Mark P.', loc: 'Battle, East Sussex', service: 'Garden Maintenance' },
-  { q: 'We had our solar panels cleaned and the difference in output was immediately noticeable. Brilliant service.', name: 'Helen W.', loc: 'Tonbridge, Kent', service: 'Solar Panel Cleaning' },
-  { q: 'Had fencing put in across the back garden. Neat, tidy work and competitively priced. Very happy.', name: 'Steve G.', loc: 'Maidstone, Kent', service: 'Fencing' },
-  { q: 'Andy is brilliant to deal with. Prompt replies, fair prices, excellent standard of work every time.', name: 'Karen D.', loc: 'Tunbridge Wells, Kent', service: 'Hedge & Tree Care' },
-  { q: 'Jet washed our entire driveway and patio — looks brand new. Will be booking again next year.', name: 'Tom L.', loc: 'Folkestone, Kent', service: 'Jet Washing' },
-  { q: 'Gutters were overflowing. Team came out same week, cleared everything and cleaned the fascias too.', name: 'Pauline C.', loc: 'Hastings, East Sussex', service: 'Gutter Clearing' },
-  { q: 'We use Ticehurst for fortnightly garden maintenance. Lawn is always perfect, borders always tidy.', name: 'Ian R.', loc: 'Bexhill, East Sussex', service: 'Garden Maintenance' },
-]
+// Reviews are now fetched from CMS in the page function below
 
 function Stars() {
   return (
@@ -40,27 +28,29 @@ function Stars() {
   )
 }
 
-const schema = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'Ticehurst Grounds & Gardens',
-  url: 'https://www.ticehurstgroundsandgardens.co.uk/',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '5',
-    reviewCount: String(REVIEWS.length),
-    bestRating: '5',
-    worstRating: '1',
-  },
-  review: REVIEWS.map((r) => ({
-    '@type': 'Review',
-    author: { '@type': 'Person', name: r.name },
-    reviewBody: r.q,
-    reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
-  })),
-})
+export default async function ReviewsPage() {
+  const cmsReviews = await getReviews()
+  const REVIEWS = cmsReviews.map(r => ({ q: r.quote, name: r.name, loc: r.location, service: r.service || '' }))
 
-export default function ReviewsPage() {
+  const schema = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Ticehurst Grounds & Gardens',
+    url: 'https://www.ticehurstgroundsandgardens.co.uk/',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5',
+      reviewCount: String(REVIEWS.length),
+      bestRating: '5',
+      worstRating: '1',
+    },
+    review: REVIEWS.map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.name },
+      reviewBody: r.q,
+      reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+    })),
+  })
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schema }} />
