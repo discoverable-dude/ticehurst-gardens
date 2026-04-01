@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   },
 }
 
+export const revalidate = 60
+
 // Reviews are now fetched from CMS in the page function below
 
 function Stars() {

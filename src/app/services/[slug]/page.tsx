@@ -12,6 +12,8 @@ import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
 import { getServicePhotos } from '@/lib/photos'
 
+export const revalidate = 60 // revalidate every 60 seconds
+
 export async function generateStaticParams() {
   const services = await getAllServices()
   return services.map(s => ({ slug: s.slug }))

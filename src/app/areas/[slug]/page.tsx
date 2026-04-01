@@ -10,6 +10,8 @@ import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
 
+export const revalidate = 60
+
 export async function generateStaticParams() {
   const locations = await getAllLocations()
   return locations.map(l => ({ slug: l.slug }))

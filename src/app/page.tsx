@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk' },
 }
 
+export const revalidate = 60
+
 const LOCAL_BUSINESS_SCHEMA = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",

@@ -114,12 +114,20 @@ export function GallerySection({
   const beforePhotos = images?.filter(p => p.category === 'before') ?? []
   const afterPhotos = images?.filter(p => p.category === 'after') ?? []
 
-  // Build before/after pairs by pair_id
+  // Build before/after pairs by pair_id, or by position if unpaired
   const pairs: { before: Photo; after: Photo }[] = []
+  const usedAfterIds = new Set<string>()
   for (const b of beforePhotos) {
-    if (!b.pair_id) continue
-    const a = afterPhotos.find(p => p.pair_id === b.pair_id)
-    if (a) pairs.push({ before: b, after: a })
+    if (b.pair_id) {
+      const a = afterPhotos.find(p => p.pair_id === b.pair_id)
+      if (a) { pairs.push({ before: b, after: a }); usedAfterIds.add(a.id) }
+    }
+  }
+  // Pair remaining unpaired before/after by position
+  const unpairedBefore = beforePhotos.filter(b => !b.pair_id)
+  const unpairedAfter = afterPhotos.filter(a => !a.pair_id && !usedAfterIds.has(a.id))
+  for (let i = 0; i < Math.min(unpairedBefore.length, unpairedAfter.length); i++) {
+    pairs.push({ before: unpairedBefore[i], after: unpairedAfter[i] })
   }
 
   const hasImages = workPhotos.length > 0 || pairs.length > 0
