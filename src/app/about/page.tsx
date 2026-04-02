@@ -6,7 +6,7 @@ import Wave from '@/components/Wave'
 import Link from 'next/link'
 import { Star, ArrowRight } from 'lucide-react'
 import { GallerySection } from '@/components/Gallery'
-import { getPhotosByCategory } from '@/lib/photos'
+import { getPhotosByCategory, getPortfolioPhotos } from '@/lib/photos'
 
 export const metadata: Metadata = {
   title: 'About Us | Ticehurst Grounds & Gardens',
@@ -17,7 +17,10 @@ export const metadata: Metadata = {
 export const revalidate = 60
 
 export default async function AboutPage() {
-  const aboutPhotos = await getPhotosByCategory('about')
+  const [aboutPhotos, portfolioPhotos] = await Promise.all([
+    getPhotosByCategory('about'),
+    getPortfolioPhotos(6),
+  ])
   const heroPhoto = aboutPhotos[0]
   return (
     <>
@@ -133,17 +136,10 @@ export default async function AboutPage() {
       <GallerySection
         subheading="Our work"
         heading="The Team in Action"
-        description="Photos of our team at work across Kent & East Sussex — coming soon."
+        description="A selection of recent work across Kent & East Sussex."
+        images={portfolioPhotos}
         count={6}
         columns={3}
-        labels={[
-          'Garden transformation',
-          'Lawn maintenance',
-          'Hedge trimming',
-          'Jet washing results',
-          'Window cleaning',
-          'The team on site',
-        ]}
       />
 
       <Footer />

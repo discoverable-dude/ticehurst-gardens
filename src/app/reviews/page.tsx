@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Star, ArrowRight, MapPin, CheckCircle2 } from 'lucide-react'
 import { GallerySection } from '@/components/Gallery'
 import { getReviews } from '@/lib/cms'
-import { getPhotosByCategory } from '@/lib/photos'
+import { getPhotosByCategory, getPortfolioPhotos } from '@/lib/photos'
 
 export const metadata: Metadata = {
   title: 'Customer Reviews | Ticehurst Grounds & Gardens',
@@ -34,7 +34,10 @@ function Stars() {
 
 export default async function ReviewsPage() {
   const cmsReviews = await getReviews()
-  const heroPhotos = await getPhotosByCategory('hero')
+  const [heroPhotos, portfolioPhotos] = await Promise.all([
+    getPhotosByCategory('hero'),
+    getPortfolioPhotos(6),
+  ])
   const heroPhoto = heroPhotos[0]
   const REVIEWS = cmsReviews.map(r => ({ q: r.quote, name: r.name, loc: r.location, service: r.service || '' }))
 
@@ -142,19 +145,12 @@ export default async function ReviewsPage() {
 
       {/* Before & After gallery placeholder */}
       <GallerySection
-        subheading="Before & after"
-        heading="See the Difference"
-        description="Before-and-after photos from real projects across Kent & East Sussex — coming soon."
+        subheading="Our work"
+        heading="See the Results"
+        description="A selection of recent projects across Kent & East Sussex."
+        images={portfolioPhotos}
         count={6}
         columns={3}
-        labels={[
-          'Garden clearance — before',
-          'Garden clearance — after',
-          'Jet washing — before',
-          'Jet washing — after',
-          'Hedge trimming — before',
-          'Hedge trimming — after',
-        ]}
       />
 
       <Wave fromColor="#FFFFFF" toColor="#EDF7EF" path="M0,35 C480,0 960,68 1440,25 L1440,68 L0,68 Z" height={68} />
