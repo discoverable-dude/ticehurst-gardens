@@ -58,7 +58,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         description: svc.intro,
         serviceType: svc.name,
         url: `https://www.ticehurstgroundsandgardens.co.uk/services/${svc.slug}/`,
-        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgroundsandgardens.co.uk/', telephone: '+447700000000' },
+        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgroundsandgardens.co.uk/', telephone: '+447989143717' },
         areaServed: [{ '@type': 'AdministrativeArea', name: 'Kent' }, { '@type': 'AdministrativeArea', name: 'East Sussex' }],
       },
       {
@@ -103,7 +103,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <Link href="/quote/" className="flex items-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-moss transition-all">
                   Get a free quote <ArrowRight size={13} />
                 </Link>
-                <a href="https://wa.me/447700000000" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 transition-all">
+                <a href="https://wa.me/447989143717" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 transition-all">
                   WhatsApp Andy
                 </a>
               </div>
@@ -264,7 +264,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <Link href="/quote/" className="flex-1 flex items-center justify-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-moss transition-all">
               Get instant estimate
             </Link>
-            <a href="https://wa.me/447700000000" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
+            <a href="https://wa.me/447989143717" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
               WhatsApp Andy
             </a>
           </div>

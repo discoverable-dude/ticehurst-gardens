@@ -82,7 +82,7 @@ export default function Nav() {
       <div className="bg-charcoal text-center py-2 px-4 text-sm text-tlight relative z-50">
         <strong className="text-white">Free, no-obligation quotes</strong>
         {' '}&mdash; Garden &amp; exterior cleaning across Kent &amp; East Sussex &nbsp;&middot;&nbsp;
-        <a href="https://wa.me/447700000000" className="text-mid underline underline-offset-2 hover:text-white transition-colors">WhatsApp Andy</a>
+        <a href="https://wa.me/447989143717" className="text-mid underline underline-offset-2 hover:text-white transition-colors">WhatsApp Andy</a>
       </div>
 
       {/* Nav */}

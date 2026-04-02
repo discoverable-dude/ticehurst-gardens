@@ -17,7 +17,7 @@ const LOCAL_BUSINESS_SCHEMA = JSON.stringify({
   "name": "Ticehurst Grounds & Gardens",
   "description": "Professional garden maintenance and exterior cleaning across Kent and East Sussex.",
   "url": "https://www.ticehurstgroundsandgardens.co.uk/",
-  "telephone": "+447700000000",
+  "telephone": "+447989143717",
   "email": "ticehurstgg@gmail.com",
   "priceRange": "££",
   "address": { "@type": "PostalAddress", "addressLocality": "Ticehurst", "addressRegion": "East Sussex", "addressCountry": "GB", "postalCode": "TN5" },

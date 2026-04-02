@@ -109,7 +109,7 @@ export default function ServicesPage() {
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link href="/quote/" className="flex-1 flex items-center justify-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-moss transition-all">Get instant estimate <ArrowRight size={14} /></Link>
-            <a href="https://wa.me/447700000000" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">WhatsApp Andy</a>
+            <a href="https://wa.me/447989143717" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">WhatsApp Andy</a>
           </div>
         </div>
       </section>

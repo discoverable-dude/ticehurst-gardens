@@ -179,7 +179,7 @@ export default function HomeContent({
                     <Link href="/quote/" className="flex items-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-moss transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sage/25">
                       <Zap size={14} strokeWidth={2} />Get an instant estimate
                     </Link>
-                    <Link href="https://wa.me/447700000000" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 hover:border-white/50 transition-all">
+                    <Link href="https://wa.me/447989143717" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 hover:border-white/50 transition-all">
                       <Mail size={14} strokeWidth={2} />WhatsApp Andy
                     </Link>
                   </div>
@@ -432,7 +432,7 @@ export default function HomeContent({
             <h2 className="font-head font-black text-[clamp(26px,3.5vw,42px)] uppercase tracking-wide text-white leading-none mb-4">Get a Free, No-Obligation Quote</h2>
             <p className="text-tlight text-[15px] leading-relaxed mb-6">Contact Andy directly. Free, honest quotes with no pressure, ever.</p>
             <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-[14px] text-tlight"><Mail size={15} className="text-mid flex-shrink-0" /><a href="https://wa.me/447700000000" className="text-mid font-semibold hover:text-white transition-colors">ticehurstgg@gmail.com</a></div>
+              <div className="flex items-center gap-3 text-[14px] text-tlight"><Mail size={15} className="text-mid flex-shrink-0" /><a href="https://wa.me/447989143717" className="text-mid font-semibold hover:text-white transition-colors">ticehurstgg@gmail.com</a></div>
               <div className="flex items-center gap-3 text-[14px] text-tlight"><span className="text-mid">📷</span><a href="https://www.instagram.com/ticehurstgg" target="_blank" rel="noopener" className="text-mid font-semibold hover:text-white transition-colors">@ticehurstgg</a></div>
             </div>
           </FadeIn>
@@ -443,7 +443,7 @@ export default function HomeContent({
               </Link>
             </AnimatedItem>
             <AnimatedItem>
-              <a href="https://wa.me/447700000000" className="flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist hover:shadow-lg transition-all hover:-translate-y-0.5">
+              <a href="https://wa.me/447989143717" className="flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist hover:shadow-lg transition-all hover:-translate-y-0.5">
                 <Mail size={15} strokeWidth={2} />WhatsApp Andy now
               </a>
             </AnimatedItem>

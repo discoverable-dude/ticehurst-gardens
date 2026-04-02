@@ -76,6 +76,6 @@ export const CONTACT_DEFAULTS: Record<string, unknown> = {
     response_time: 'We aim to respond within 24 hours. For an immediate response, WhatsApp Andy.',
     email: 'ticehurstgg@gmail.com',
     instagram: '@ticehurstgg',
-    whatsapp: '447700000000',
+    whatsapp: '447989143717',
   },
 }

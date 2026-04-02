@@ -67,7 +67,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
         '@type': 'LocalBusiness',
         name: 'Ticehurst Grounds & Gardens',
         url: 'https://www.ticehurstgroundsandgardens.co.uk/',
-        telephone: '+447700000000',
+        telephone: '+447989143717',
         email: 'ticehurstgg@gmail.com',
         areaServed: [{ '@type': 'City', name: loc.name, addressRegion: loc.county }],
         serviceType: ['Lawn Care','Garden Maintenance','Hedge and Tree Care','Window Cleaning','Gutter Clearing','Solar Panel Cleaning','Jet Washing','Fencing'],
@@ -129,7 +129,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
                 <Link href="/quote/" className="flex items-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-moss transition-all">
                   Free quote in {loc.name} <ArrowRight size={13} />
                 </Link>
-                <a href="https://wa.me/447700000000" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-white/10 transition-all">
+                <a href="https://wa.me/447989143717" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-white/10 transition-all">
                   WhatsApp Andy
                 </a>
               </div>
@@ -274,7 +274,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
             <Link href="/quote/" className="flex-1 flex items-center justify-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-moss transition-all">
               Get instant estimate
             </Link>
-            <a href="https://wa.me/447700000000" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
+            <a href="https://wa.me/447989143717" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
               WhatsApp Andy
             </a>
           </div>

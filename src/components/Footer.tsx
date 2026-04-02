@@ -52,7 +52,7 @@ export default function Footer() {
               </Link>
               <p className="text-sm text-tlight/50 leading-relaxed mb-5">Professional garden maintenance and exterior cleaning across Kent &amp; East Sussex.</p>
               <div className="flex flex-col gap-2 text-[12.5px]">
-                <a href="https://wa.me/447700000000" className="text-mid hover:text-tlight transition-colors">💬 WhatsApp Andy</a>
+                <a href="https://wa.me/447989143717" className="text-mid hover:text-tlight transition-colors">💬 WhatsApp Andy</a>
                 <a href="mailto:ticehurstgg@gmail.com" className="text-tlight/50 hover:text-tlight transition-colors">✉ ticehurstgg@gmail.com</a>
                 <a href="https://www.instagram.com/ticehurstgg" target="_blank" rel="noopener noreferrer" className="text-tlight/50 hover:text-tlight transition-colors">📷 @ticehurstgg</a>
               </div>
