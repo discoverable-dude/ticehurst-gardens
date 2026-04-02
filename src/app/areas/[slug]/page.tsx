@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
@@ -9,6 +10,7 @@ import { getCmsLocation, getAllLocations } from '@/lib/cms'
 import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
+import { getPhotosByCategory } from '@/lib/photos'
 
 export const revalidate = 60
 
@@ -59,6 +61,8 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
   if (!loc) notFound()
 
   const nearbyLocations = LOCATIONS.filter(l => loc.nearby.includes(l.slug))
+  const heroPhotos = await getPhotosByCategory('hero')
+  const heroPhoto = heroPhotos[0]
 
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
@@ -98,7 +102,20 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       <Nav />
 
       {/* Hero */}
-      <header className="bg-forest overflow-hidden">
+      <header className="bg-forest overflow-hidden relative">
+        {heroPhoto && (
+          <>
+            <Image
+              src={heroPhoto.url}
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-forest/80" />
+          </>
+        )}
         <div className="max-w-6xl mx-auto px-6 pt-12 pb-0 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start pb-14">
             <div>
