@@ -34,7 +34,6 @@ const NAV_SERVICES = {
 
 const NAV_LINKS = [
   { label: 'Areas',       href: '/areas/' },
-  { label: 'Get a Quote', href: '/quote/' },
   { label: 'Reviews',     href: '/reviews/' },
   { label: 'About',       href: '/about/' },
   { label: 'Contact',     href: '/contact/' },
@@ -202,7 +201,7 @@ export default function Nav() {
               </Link>
             ))}
             <Link
-              href="mailto:ticehurstgg@gmail.com"
+              href="/quote/"
               className="ml-2 flex items-center gap-2 bg-forest text-white font-head font-bold text-sm uppercase tracking-wider px-5 py-2.5 rounded-full hover:bg-moss hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
             >
               <MessageCircle size={13} />
@@ -341,7 +340,7 @@ export default function Nav() {
                   transition={{ delay: 0.3, duration: 0.25 }}
                 >
                   <Link
-                    href="mailto:ticehurstgg@gmail.com"
+                    href="/quote/"
                     onClick={() => setOpen(false)}
                     className="mt-2 flex items-center justify-center gap-2 bg-forest text-white font-head font-bold text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-moss transition-colors"
                   >
