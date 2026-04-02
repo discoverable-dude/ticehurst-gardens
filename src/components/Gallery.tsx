@@ -51,16 +51,17 @@ export function BeforeAfterCard({
 }) {
   return (
     <div className={`rounded-xl border overflow-hidden ${dark ? 'border-white/10' : 'border-pebble'}`}>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2">
         <div className="relative">
           <Image
             src={before.url}
             alt={before.alt || 'Before'}
-            width={600}
-            height={400}
+            width={800}
+            height={600}
             className="w-full aspect-[4/3] object-cover"
+            sizes="(max-width: 640px) 100vw, 50vw"
           />
-          <span className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] font-bold font-head uppercase tracking-wider px-2 py-1 rounded">
+          <span className="absolute bottom-3 left-3 bg-black/60 text-white text-xs font-bold font-head uppercase tracking-wider px-3 py-1.5 rounded">
             Before
           </span>
         </div>
@@ -68,11 +69,12 @@ export function BeforeAfterCard({
           <Image
             src={after.url}
             alt={after.alt || 'After'}
-            width={600}
-            height={400}
+            width={800}
+            height={600}
             className="w-full aspect-[4/3] object-cover"
+            sizes="(max-width: 640px) 100vw, 50vw"
           />
-          <span className="absolute bottom-2 left-2 bg-green-700/80 text-white text-[10px] font-bold font-head uppercase tracking-wider px-2 py-1 rounded">
+          <span className="absolute bottom-3 left-3 bg-green-700/80 text-white text-xs font-bold font-head uppercase tracking-wider px-3 py-1.5 rounded">
             After
           </span>
         </div>
@@ -157,9 +159,9 @@ export function GallerySection({
           {description}
         </p>
 
-        {/* Before/After pairs */}
+        {/* Before/After pairs — full width, 2 columns (before | after) */}
         {pairs.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div className="flex flex-col gap-6 mb-8">
             {pairs.map(p => (
               <BeforeAfterCard key={p.before.id} before={p.before} after={p.after} dark={dark} />
             ))}
