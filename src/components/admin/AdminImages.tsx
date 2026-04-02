@@ -1,7 +1,8 @@
 'use client'
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 
 type Photo = { id: string; url: string; alt: string; service_slug: string | null; category: string; pair_id: string | null }
+type Placement = { id: string; photo_id: string; service_slug: string | null; category: string; pair_id: string | null; sort_order: number }
 
 const SERVICE_OPTIONS = [
   { value: '', label: 'None (hero/about)' },
@@ -32,13 +33,53 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
   const fileRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
 
+  // Placement management
+  const [placementsFor, setPlacementsFor] = useState<Photo | null>(null)
+  const [placements, setPlacements] = useState<Placement[]>([])
+  const [newPlacement, setNewPlacement] = useState({ service_slug: '', category: 'work', pair_id: '' })
+
   const loadExisting = useCallback(async () => {
     const res = await fetch('/api/admin/photos', { headers: authHeaders() })
     if (res.ok) setExisting(await res.json())
   }, [authHeaders])
 
-  // Load on mount
-  useState(() => { loadExisting() })
+  useEffect(() => { loadExisting() }, [loadExisting])
+
+  const loadPlacements = useCallback(async (photoId: string) => {
+    const res = await fetch(`/api/admin/placements?photo_id=${photoId}`, { headers: authHeaders() })
+    if (res.ok) setPlacements(await res.json())
+  }, [authHeaders])
+
+  const openPlacements = (photo: Photo) => {
+    setPlacementsFor(photo)
+    loadPlacements(photo.id)
+    setNewPlacement({ service_slug: '', category: 'work', pair_id: '' })
+  }
+
+  const addPlacement = async () => {
+    if (!placementsFor) return
+    const res = await fetch('/api/admin/placements', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({
+        photo_id: placementsFor.id,
+        service_slug: newPlacement.service_slug || null,
+        category: newPlacement.category,
+        pair_id: newPlacement.pair_id || null,
+      }),
+    })
+    if (res.ok) {
+      loadPlacements(placementsFor.id)
+      setNewPlacement({ service_slug: '', category: 'work', pair_id: '' })
+    }
+  }
+
+  const removePlacement = async (id: string) => {
+    await fetch('/api/admin/placements', {
+      method: 'DELETE', headers: authHeaders(),
+      body: JSON.stringify({ id }),
+    })
+    if (placementsFor) loadPlacements(placementsFor.id)
+  }
 
   const addFiles = (files: FileList | File[]) => {
     const newPending = Array.from(files)
@@ -74,10 +115,8 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
 
     if (res.ok) {
       const results = await res.json()
-      // Clean up blob URLs
       pending.forEach(p => URL.revokeObjectURL(p.preview))
       setPending([])
-      // Show uploaded photos for tagging
       const photos = results.filter((r: Record<string, unknown>) => r.id) as UploadedPhoto[]
       setUploaded(photos)
       loadExisting()
@@ -94,17 +133,23 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
   }
 
   const savePhoto = async (photo: UploadedPhoto) => {
+    // Save metadata on the photo
     await fetch('/api/admin/photos', {
-      method: 'PATCH',
-      headers: authHeaders(),
-      body: JSON.stringify({
-        id: photo.id,
-        alt: photo.alt,
-        service_slug: photo.service_slug,
-        category: photo.category,
-        pair_id: photo.pair_id,
-      }),
+      method: 'PATCH', headers: authHeaders(),
+      body: JSON.stringify({ id: photo.id, alt: photo.alt }),
     })
+    // Create a placement for the chosen service/category
+    if (photo.service_slug || photo.category !== 'work') {
+      await fetch('/api/admin/placements', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({
+          photo_id: photo.id,
+          service_slug: photo.service_slug,
+          category: photo.category,
+          pair_id: photo.pair_id,
+        }),
+      })
+    }
     setUploaded(prev => prev.map(p => p.id === photo.id ? { ...p, dirty: false } : p))
   }
 
@@ -115,12 +160,81 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
 
   const deletePhoto = async (id: string) => {
     await fetch('/api/admin/photos', {
-      method: 'DELETE',
-      headers: authHeaders(),
+      method: 'DELETE', headers: authHeaders(),
       body: JSON.stringify({ id }),
     })
     setExisting(prev => prev.filter(p => p.id !== id))
     setUploaded(prev => prev.filter(p => p.id !== id))
+    if (placementsFor?.id === id) setPlacementsFor(null)
+  }
+
+  // Placement management modal
+  if (placementsFor) {
+    return (
+      <div className="space-y-4">
+        <button onClick={() => setPlacementsFor(null)} className="text-gray-600 text-sm hover:underline">&larr; Back to all images</button>
+
+        <div className="bg-white rounded-lg shadow-md p-5">
+          <div className="flex gap-4 items-start mb-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={placementsFor.url} alt={placementsFor.alt} className="w-32 h-24 object-cover rounded" />
+            <div>
+              <h2 className="font-semibold text-lg">Manage Placements</h2>
+              <p className="text-sm text-gray-500">{placementsFor.alt || 'No alt text'}</p>
+              <p className="text-xs text-gray-400 mt-1">This image can appear in multiple places across the site.</p>
+            </div>
+          </div>
+
+          {/* Existing placements */}
+          <h3 className="font-medium text-sm mb-2">Current placements ({placements.length})</h3>
+          {placements.length === 0 ? (
+            <p className="text-gray-500 text-sm mb-4">No placements yet — this image isn&apos;t shown anywhere on the site.</p>
+          ) : (
+            <ul className="divide-y mb-4">
+              {placements.map(p => (
+                <li key={p.id} className="py-2 flex items-center justify-between gap-3">
+                  <div className="text-sm">
+                    <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-medium">{p.category}</span>
+                    {p.service_slug && <span className="ml-2 text-gray-600">{p.service_slug}</span>}
+                    {!p.service_slug && <span className="ml-2 text-gray-400">global</span>}
+                    {p.pair_id && <span className="ml-2 text-blue-600 text-xs">pair: {p.pair_id}</span>}
+                  </div>
+                  <button onClick={() => removePlacement(p.id)} className="text-red-600 text-xs hover:underline">Remove</button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Add new placement */}
+          <h3 className="font-medium text-sm mb-2">Add placement</h3>
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <select value={newPlacement.service_slug}
+              onChange={e => setNewPlacement({ ...newPlacement, service_slug: e.target.value })}
+              className="border rounded px-2 py-1.5 text-sm">
+              {SERVICE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+            <select value={newPlacement.category}
+              onChange={e => setNewPlacement({ ...newPlacement, category: e.target.value })}
+              className="border rounded px-2 py-1.5 text-sm">
+              <option value="work">Work photo</option>
+              <option value="before">Before</option>
+              <option value="after">After</option>
+              <option value="hero">Hero background</option>
+              <option value="about">About section</option>
+            </select>
+          </div>
+          {(newPlacement.category === 'before' || newPlacement.category === 'after') && (
+            <input type="text" placeholder="Pair ID (e.g. lawn-1)" value={newPlacement.pair_id}
+              onChange={e => setNewPlacement({ ...newPlacement, pair_id: e.target.value })}
+              className="w-full border rounded px-2 py-1.5 text-sm mb-2" />
+          )}
+          <button onClick={addPlacement}
+            className="bg-green-700 text-white px-4 py-1.5 rounded text-sm hover:bg-green-800">
+            Add Placement
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -242,15 +356,17 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
                 <img src={p.url} alt={p.alt} className="w-full aspect-[4/3] object-cover" />
                 <div className="p-2">
                   <p className="text-xs text-gray-600 truncate">{p.alt || 'No alt text'}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">
-                    {p.service_slug || p.category}
-                    {p.pair_id && <span className="ml-1 bg-blue-50 px-1 rounded">{p.pair_id}</span>}
-                  </p>
                 </div>
-                <button onClick={() => deletePhoto(p.id)}
-                  className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                  Delete
-                </button>
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button onClick={() => openPlacements(p)}
+                    className="bg-white text-gray-800 text-xs px-3 py-1.5 rounded font-medium hover:bg-gray-100">
+                    Placements
+                  </button>
+                  <button onClick={() => deletePhoto(p.id)}
+                    className="bg-red-600 text-white text-xs px-3 py-1.5 rounded font-medium hover:bg-red-700">
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
