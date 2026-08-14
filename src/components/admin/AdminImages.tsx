@@ -1,7 +1,7 @@
 'use client'
 import { useState, useCallback, useRef, useEffect } from 'react'
 
-type Photo = { id: string; url: string; alt: string; service_slug: string | null; category: string; pair_id: string | null }
+type Photo = { id: string; url: string; alt: string; service_slug: string | null; category: string; pair_id: string | null; active?: boolean }
 type Placement = { id: string; photo_id: string; service_slug: string | null; category: string; pair_id: string | null; sort_order: number }
 
 const SERVICE_OPTIONS = [
@@ -38,12 +38,21 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
   const [placements, setPlacements] = useState<Placement[]>([])
   const [newPlacement, setNewPlacement] = useState({ service_slug: '', category: 'work', pair_id: '' })
 
+  const [allPlacements, setAllPlacements] = useState<Placement[]>([])
+
   const loadExisting = useCallback(async () => {
     const res = await fetch('/api/admin/photos', { headers: authHeaders() })
     if (res.ok) setExisting(await res.json())
   }, [authHeaders])
 
-  useEffect(() => { loadExisting() }, [loadExisting])
+  // All placements across every photo (no photo_id param returns them all), so
+  // the gallery can show where each image is used without opening each one.
+  const loadAllPlacements = useCallback(async () => {
+    const res = await fetch('/api/admin/placements', { headers: authHeaders() })
+    if (res.ok) setAllPlacements(await res.json())
+  }, [authHeaders])
+
+  useEffect(() => { loadExisting(); loadAllPlacements() }, [loadExisting, loadAllPlacements])
 
   const loadPlacements = useCallback(async (photoId: string) => {
     const res = await fetch(`/api/admin/placements?photo_id=${photoId}`, { headers: authHeaders() })
@@ -69,6 +78,7 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
     })
     if (res.ok) {
       loadPlacements(placementsFor.id)
+      loadAllPlacements()
       setNewPlacement({ service_slug: '', category: 'work', pair_id: '' })
     }
   }
@@ -79,6 +89,7 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
       body: JSON.stringify({ id }),
     })
     if (placementsFor) loadPlacements(placementsFor.id)
+    loadAllPlacements()
   }
 
   const addFiles = (files: FileList | File[]) => {
@@ -167,6 +178,15 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
     setUploaded(prev => prev.filter(p => p.id !== id))
     if (placementsFor?.id === id) setPlacementsFor(null)
   }
+
+  // Index placements by photo, and a friendly page label, for the gallery badges.
+  const placementsByPhoto = new Map<string, Placement[]>()
+  for (const pl of allPlacements) {
+    const arr = placementsByPhoto.get(pl.photo_id) ?? []
+    arr.push(pl); placementsByPhoto.set(pl.photo_id, arr)
+  }
+  const pageLabel = (slug: string | null) =>
+    slug ? (SERVICE_OPTIONS.find(o => o.value === slug)?.label ?? slug) : 'Global'
 
   // Placement management modal
   if (placementsFor) {
@@ -354,8 +374,27 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
               <div key={p.id} className="border rounded-lg overflow-hidden group relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url} alt={p.alt} className="w-full aspect-[4/3] object-cover" />
-                <div className="p-2">
+                <div className="p-2 space-y-1">
                   <p className="text-xs text-gray-600 truncate">{p.alt || 'No alt text'}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {(() => {
+                      const pls = placementsByPhoto.get(p.id) ?? []
+                      if (pls.length === 0)
+                        return <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Unplaced</span>
+                      const paired = pls.some(x => x.pair_id || x.category === 'before' || x.category === 'after')
+                      return (
+                        <>
+                          {pls.map(x => (
+                            <span key={x.id} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
+                              {pageLabel(x.service_slug)} · {x.category}
+                            </span>
+                          ))}
+                          {paired && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">Paired</span>}
+                        </>
+                      )
+                    })()}
+                    {p.active === false && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600">Hidden</span>}
+                  </div>
                 </div>
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button onClick={() => openPlacements(p)}
