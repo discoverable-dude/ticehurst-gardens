@@ -1,7 +1,7 @@
 'use client'
 import { useState, useCallback, useRef, useEffect } from 'react'
 
-type Photo = { id: string; url: string; alt: string; service_slug: string | null; category: string; pair_id: string | null }
+type Photo = { id: string; url: string; alt: string; service_slug: string | null; category: string; pair_id: string | null; active?: boolean }
 type Placement = { id: string; photo_id: string; service_slug: string | null; category: string; pair_id: string | null; sort_order: number }
 
 const SERVICE_OPTIONS = [
@@ -38,12 +38,28 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
   const [placements, setPlacements] = useState<Placement[]>([])
   const [newPlacement, setNewPlacement] = useState({ service_slug: '', category: 'work', pair_id: '' })
 
+  const [allPlacements, setAllPlacements] = useState<Placement[]>([])
+
+  // Gallery filters
+  const [pageF, setPageF] = useState('any')       // 'any' | service slug | 'global'
+  const [catF, setCatF] = useState('any')         // 'any' | category
+  const [unplacedOnly, setUnplacedOnly] = useState(false)
+  const [pairedOnly, setPairedOnly] = useState(false)
+  const [imgQuery, setImgQuery] = useState('')
+
   const loadExisting = useCallback(async () => {
     const res = await fetch('/api/admin/photos', { headers: authHeaders() })
     if (res.ok) setExisting(await res.json())
   }, [authHeaders])
 
-  useEffect(() => { loadExisting() }, [loadExisting])
+  // All placements across every photo (no photo_id param returns them all), so
+  // the gallery can show where each image is used without opening each one.
+  const loadAllPlacements = useCallback(async () => {
+    const res = await fetch('/api/admin/placements', { headers: authHeaders() })
+    if (res.ok) setAllPlacements(await res.json())
+  }, [authHeaders])
+
+  useEffect(() => { loadExisting(); loadAllPlacements() }, [loadExisting, loadAllPlacements])
 
   const loadPlacements = useCallback(async (photoId: string) => {
     const res = await fetch(`/api/admin/placements?photo_id=${photoId}`, { headers: authHeaders() })
@@ -69,6 +85,7 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
     })
     if (res.ok) {
       loadPlacements(placementsFor.id)
+      loadAllPlacements()
       setNewPlacement({ service_slug: '', category: 'work', pair_id: '' })
     }
   }
@@ -79,6 +96,7 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
       body: JSON.stringify({ id }),
     })
     if (placementsFor) loadPlacements(placementsFor.id)
+    loadAllPlacements()
   }
 
   const addFiles = (files: FileList | File[]) => {
@@ -167,6 +185,33 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
     setUploaded(prev => prev.filter(p => p.id !== id))
     if (placementsFor?.id === id) setPlacementsFor(null)
   }
+
+  // Index placements by photo, and a friendly page label, for the gallery badges.
+  const placementsByPhoto = new Map<string, Placement[]>()
+  for (const pl of allPlacements) {
+    const arr = placementsByPhoto.get(pl.photo_id) ?? []
+    arr.push(pl); placementsByPhoto.set(pl.photo_id, arr)
+  }
+  const pageLabel = (slug: string | null) =>
+    slug ? (SERVICE_OPTIONS.find(o => o.value === slug)?.label ?? slug) : 'Global'
+
+  // Apply the gallery filters against each photo's placements.
+  const filtered = existing.filter(p => {
+    const pls = placementsByPhoto.get(p.id) ?? []
+    if (unplacedOnly && pls.length > 0) return false
+    if (pairedOnly && !pls.some(x => x.pair_id || x.category === 'before' || x.category === 'after')) return false
+    if (pageF !== 'any') {
+      const match = pageF === 'global'
+        ? pls.some(x => !x.service_slug)
+        : pls.some(x => x.service_slug === pageF)
+      if (!match) return false
+    }
+    if (catF !== 'any' && !pls.some(x => x.category === catF)) return false
+    if (imgQuery && !(p.alt ?? '').toLowerCase().includes(imgQuery.toLowerCase())) return false
+    return true
+  })
+  const placedCount = existing.filter(p => (placementsByPhoto.get(p.id) ?? []).length > 0).length
+  const pairCount = new Set(allPlacements.filter(x => x.pair_id).map(x => x.pair_id)).size
 
   // Placement management modal
   if (placementsFor) {
@@ -343,19 +388,58 @@ export default function AdminImages({ authHeaders }: { authHeaders: () => Record
 
       {/* Existing Gallery */}
       <div className="bg-white rounded-lg shadow-md">
-        <h2 className="font-semibold text-lg p-5 pb-3">
-          All Images <span className="text-gray-400 font-normal">({existing.length})</span>
-        </h2>
-        {existing.length === 0 ? (
-          <p className="px-5 pb-5 text-gray-500">No images uploaded yet.</p>
+        <div className="p-5 pb-3 space-y-3">
+          <h2 className="font-semibold text-lg">
+            All Images <span className="text-gray-400 font-normal">({existing.length})</span>
+          </h2>
+          <p className="text-xs text-gray-500">
+            {placedCount} placed · {existing.length - placedCount} unplaced · {pairCount} pair{pairCount === 1 ? '' : 's'}
+          </p>
+          <div className="flex flex-wrap gap-2 items-center">
+            <select value={pageF} onChange={e => setPageF(e.target.value)} className="border rounded px-2 py-1 text-sm">
+              <option value="any">Any page</option>
+              <option value="global">Global (hero/about)</option>
+              {SERVICE_OPTIONS.filter(o => o.value).map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+            <select value={catF} onChange={e => setCatF(e.target.value)} className="border rounded px-2 py-1 text-sm">
+              <option value="any">Any category</option>
+              {['work', 'before', 'after', 'hero', 'about'].map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <label className="text-sm flex items-center gap-1"><input type="checkbox" checked={unplacedOnly} onChange={e => setUnplacedOnly(e.target.checked)} /> Unplaced only</label>
+            <label className="text-sm flex items-center gap-1"><input type="checkbox" checked={pairedOnly} onChange={e => setPairedOnly(e.target.checked)} /> Paired only</label>
+            <input value={imgQuery} onChange={e => setImgQuery(e.target.value)} placeholder="Search alt text" className="border rounded px-2 py-1 text-sm" />
+            <span className="text-xs text-gray-500">Showing {filtered.length} of {existing.length}</span>
+          </div>
+        </div>
+        {filtered.length === 0 ? (
+          <p className="px-5 pb-5 text-gray-500">{existing.length === 0 ? 'No images uploaded yet.' : 'No images match these filters.'}</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-5 pt-0">
-            {existing.map(p => (
+            {filtered.map(p => (
               <div key={p.id} className="border rounded-lg overflow-hidden group relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url} alt={p.alt} className="w-full aspect-[4/3] object-cover" />
-                <div className="p-2">
+                <div className="p-2 space-y-1">
                   <p className="text-xs text-gray-600 truncate">{p.alt || 'No alt text'}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {(() => {
+                      const pls = placementsByPhoto.get(p.id) ?? []
+                      if (pls.length === 0)
+                        return <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Unplaced</span>
+                      const paired = pls.some(x => x.pair_id || x.category === 'before' || x.category === 'after')
+                      return (
+                        <>
+                          {pls.map(x => (
+                            <span key={x.id} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">
+                              {pageLabel(x.service_slug)} · {x.category}
+                            </span>
+                          ))}
+                          {paired && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">Paired</span>}
+                        </>
+                      )
+                    })()}
+                    {p.active === false && <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-600">Hidden</span>}
+                  </div>
                 </div>
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button onClick={() => openPlacements(p)}

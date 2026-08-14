@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import AdminImages from '@/components/admin/AdminImages'
+import AdminLeads from '@/components/admin/AdminLeads'
 import AdminReviews from '@/components/admin/AdminReviews'
 import AdminServices from '@/components/admin/AdminServices'
 import AdminLocations from '@/components/admin/AdminLocations'
@@ -10,6 +11,7 @@ import AdminWebhooks from '@/components/admin/AdminWebhooks'
 
 const TABS = [
   { id: 'images', label: 'Images' },
+  { id: 'leads', label: 'Leads' },
   { id: 'reviews', label: 'Reviews' },
   { id: 'services', label: 'Services' },
   { id: 'locations', label: 'Locations' },
@@ -84,6 +86,7 @@ export default function AdminPage() {
         </div>
 
         {tab === 'images' && <AdminImages authHeaders={authHeaders} />}
+        {tab === 'leads' && <AdminLeads authHeaders={authHeaders} />}
         {tab === 'reviews' && <AdminReviews authHeaders={authHeaders} />}
         {tab === 'services' && <AdminServices authHeaders={authHeaders} />}
         {tab === 'locations' && <AdminLocations authHeaders={authHeaders} />}
