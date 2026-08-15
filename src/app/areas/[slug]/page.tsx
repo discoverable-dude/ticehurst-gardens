@@ -10,7 +10,7 @@ import { getCmsLocation, getAllLocations } from '@/lib/cms'
 import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
 import { GallerySection } from '@/components/Gallery'
-import { getPhotosByCategory } from '@/lib/photos'
+import { getPhotosByCategory, getLocationPhotos } from '@/lib/photos'
 
 export const revalidate = 60
 
@@ -61,8 +61,12 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
   if (!loc) notFound()
 
   const nearbyLocations = LOCATIONS.filter(l => loc.nearby.includes(l.slug))
-  const heroPhotos = await getPhotosByCategory('hero')
-  const heroPhoto = heroPhotos[0]
+  const [heroPhotos, locationPhotos] = await Promise.all([
+    getPhotosByCategory('hero'),
+    getLocationPhotos(slug),
+  ])
+  // Prefer an image placed on this area page; fall back to the shared hero.
+  const heroPhoto = locationPhotos.find(p => p.category === 'work') || locationPhotos[0] || heroPhotos[0]
 
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
@@ -198,7 +202,8 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       <GallerySection
         subheading={`Work in ${loc.name}`}
         heading={`Our Projects in ${loc.name}`}
-        description={`Recent garden maintenance and exterior cleaning work in ${loc.name} — photos coming soon.`}
+        description={`Recent garden maintenance and exterior cleaning work in ${loc.name}${locationPhotos.length ? '.' : ', photos coming soon.'}`}
+        images={locationPhotos.length ? locationPhotos : undefined}
         count={4}
         columns={2}
         labels={[
