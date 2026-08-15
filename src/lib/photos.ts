@@ -64,6 +64,39 @@ export async function getServicePhotos(slug: string): Promise<Photo[]> {
   return (data ?? []) as Photo[]
 }
 
+/** Fetch photos placed on a location/area page via placements (location_slug) */
+export async function getLocationPhotos(slug: string): Promise<Photo[]> {
+  const sb = await getAnonClient()
+  if (!sb) return []
+  const { data: placements } = await sb
+    .from('photo_placements')
+    .select('category, pair_id, sort_order, photo_id, photos(id, url, alt, active)')
+    .eq('location_slug', slug)
+    .order('sort_order')
+  if (!placements) return []
+  return placements
+    .filter((p: Record<string, unknown>) => {
+      const raw = p.photos as unknown
+      const photo = (Array.isArray(raw) ? raw[0] : raw) as Record<string, unknown> | null
+      return photo && photo.active !== false
+    })
+    .map((p: Record<string, unknown>) => {
+      const raw = p.photos as unknown
+      const photo = (Array.isArray(raw) ? raw[0] : raw) as Record<string, unknown>
+      return {
+        id: photo.id as string,
+        created_at: '',
+        url: photo.url as string,
+        alt: (photo.alt as string) || '',
+        service_slug: null,
+        category: p.category as Photo['category'],
+        pair_id: (p.pair_id as string) || null,
+        sort_order: p.sort_order as number,
+        active: true,
+      }
+    })
+}
+
 /** Fetch photos by category (e.g. 'hero', 'about') via placements */
 export async function getPhotosByCategory(category: string): Promise<Photo[]> {
   const sb = await getAnonClient()
