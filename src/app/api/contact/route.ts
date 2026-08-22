@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fireWebhooks } from '@/lib/webhooks'
+import { notifyNewLead } from '@/lib/notify'
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +16,7 @@ export async function POST(req: NextRequest) {
       console.log('CONTACT SUBMISSION (no DB):', JSON.stringify(body))
     }
     await fireWebhooks('contact', body)
+    await notifyNewLead({ name: body.name, service: body.service, town: body.town, source: 'website_form' })
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Contact route error:', err)

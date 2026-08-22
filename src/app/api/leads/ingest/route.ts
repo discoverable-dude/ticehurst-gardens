@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServiceClient } from '@/lib/admin-auth'
+import { notifyNewLead } from '@/lib/notify'
 
 // Secured ingest endpoint for external lead sources (Meta lead ads via Zapier).
 // Zapier POSTs a mapped lead here with ?token=LEAD_INGEST_SECRET. The row lands
@@ -29,5 +30,6 @@ export async function POST(req: NextRequest) {
   }]).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await notifyNewLead({ name: b.name, service: b.service, town: b.town, source: b.source ?? 'meta_lead_ad' })
   return NextResponse.json({ ok: true, id: data.id })
 }
