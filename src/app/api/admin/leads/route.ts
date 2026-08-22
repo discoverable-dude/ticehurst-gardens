@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
       name: c.name, phone: c.phone, email: c.email ?? null,
       service: c.service ?? null, town: c.town ?? null, message: c.message ?? null,
       status: c.status ?? 'new', notes: c.notes ?? null,
+      source: c.source ?? 'website_form',
     })),
     ...(quotes.data ?? []).map((q) => ({
       type: 'quote' as const,
