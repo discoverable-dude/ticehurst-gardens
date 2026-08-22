@@ -73,6 +73,11 @@ export default function AdminLeads({ authHeaders }: { authHeaders: () => Record<
               <span className={`text-xs px-2 py-0.5 rounded-full ${l.type === 'quote' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-700'}`}>
                 {l.type === 'quote' ? 'Quote' : 'Enquiry'}
               </span>
+              {l.source && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                  {l.source === 'meta_lead_ad' ? 'Meta' : l.source === 'quote_tool' ? 'Quote tool' : 'Website'}
+                </span>
+              )}
               <span className="font-semibold">{l.name}</span>
               <span className="text-gray-400 text-xs">{new Date(l.created_at).toLocaleString('en-GB')}</span>
               <div className="flex-1" />
