@@ -6,7 +6,7 @@ import { getPageContent, getReviews } from '@/lib/cms'
 export const metadata: Metadata = {
   title: 'Ticehurst Grounds & Gardens | Gardeners & Exterior Cleaning in Kent & East Sussex',
   description: 'Professional garden maintenance and exterior cleaning across Kent & East Sussex. Free quotes.',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk' },
 }
 
 export const revalidate = 60
@@ -16,7 +16,7 @@ const LOCAL_BUSINESS_SCHEMA = JSON.stringify({
   "@type": "LocalBusiness",
   "name": "Ticehurst Grounds & Gardens",
   "description": "Professional garden maintenance and exterior cleaning across Kent and East Sussex.",
-  "url": "https://www.ticehurstgroundsandgardens.co.uk/",
+  "url": "https://www.ticehurstgardens.co.uk/",
   "telephone": "+447989143717",
   "email": "ticehurstgg@gmail.com",
   "priceRange": "££",

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { LOCATIONS } from '@/lib/locations'
 import { SERVICES } from '@/lib/services'
 
-const BASE = 'https://www.ticehurstgroundsandgardens.co.uk'
+const BASE = 'https://www.ticehurstgardens.co.uk'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const core: MetadataRoute.Sitemap = [

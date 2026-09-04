@@ -8,7 +8,7 @@ import ContactForm from '@/components/ContactForm'
 export const metadata: Metadata = {
   title: 'Contact Us — Free Quotes | Ticehurst Grounds & Gardens',
   description: '...',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/contact/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/contact/' },
 }
 
 export default function ContactPage() {

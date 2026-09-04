@@ -5,7 +5,7 @@ import Wave from '@/components/Wave'
 export const metadata: Metadata = {
   title: 'Privacy Policy | Ticehurst Grounds & Gardens',
   description: 'Privacy policy for Ticehurst Grounds & Gardens.',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/privacy/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/privacy/' },
   robots: { index: false },
 }
 export default function PrivacyPage() {

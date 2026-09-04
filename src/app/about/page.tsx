@@ -11,7 +11,7 @@ import { getPhotosByCategory, getPortfolioPhotos } from '@/lib/photos'
 export const metadata: Metadata = {
   title: 'About Us | Ticehurst Grounds & Gardens',
   description: '...',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/about/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/about/' },
 }
 
 export const revalidate = 60
