@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fireWebhooks } from '@/lib/webhooks'
+import { notifyNewLead } from '@/lib/notify'
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -12,6 +15,8 @@ export async function POST(req: NextRequest) {
     } else {
       console.log('QUOTE SUBMISSION (no DB):', JSON.stringify(body))
     }
+    await fireWebhooks('quote', body)
+    await notifyNewLead({ name: body.name, service: body.service, town: body.town, source: 'quote_tool' })
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Quote route error:', err)

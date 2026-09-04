@@ -8,7 +8,7 @@ import { CheckCircle2 } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Instant Price Estimate | Ticehurst Grounds & Gardens',
   description: '...',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/quote/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/quote/' },
 }
 
 export default function QuotePage() {

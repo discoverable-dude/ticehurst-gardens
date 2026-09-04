@@ -541,7 +541,7 @@ export default function QuoteTool() {
                     <p className="font-head font-black text-xl text-forest">Andy will advise on the site visit</p>
                   )}
                 </div>
-                <a href="https://wa.me/447700000000" className="inline-flex items-center gap-2 text-sage text-sm underline underline-offset-2">
+                <a href="https://wa.me/447989143717" className="inline-flex items-center gap-2 text-sage text-sm underline underline-offset-2">
                   Or email Andy directly →
                 </a>
               </div>

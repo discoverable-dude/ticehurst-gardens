@@ -1,24 +1,32 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
-import { LOCATIONS, getLocation } from '@/lib/locations'
+import { LOCATIONS } from '@/lib/locations'
+import { getCmsLocation, getAllLocations } from '@/lib/cms'
 import { MapPin, CheckCircle2, ArrowRight, ChevronRight } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { GallerySection } from '@/components/Gallery'
+import { getPhotosByCategory, getLocationPhotos } from '@/lib/photos'
+
+export const revalidate = 60
 
 export async function generateStaticParams() {
-  return LOCATIONS.map(l => ({ slug: l.slug }))
+  const locations = await getAllLocations()
+  return locations.map(l => ({ slug: l.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const loc = getLocation(slug)
+  const loc = await getCmsLocation(slug)
   if (!loc) return {}
   return {
     title: `Garden Maintenance & Exterior Cleaning in ${loc.name}, ${loc.county}`,
     description: `Professional gardening and exterior cleaning in ${loc.name}, ${loc.county}. Lawn care, window cleaning, gutter clearing, solar panels & more. Free quotes.`,
-    alternates: { canonical: `https://www.ticehurstgroundsandgardens.co.uk/areas/${loc.slug}/` },
+    alternates: { canonical: `https://www.ticehurstgardens.co.uk/areas/${loc.slug}/` },
   }
 }
 
@@ -49,10 +57,16 @@ function Stars() {
 
 export default async function AreaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const loc = getLocation(slug)
+  const loc = await getCmsLocation(slug)
   if (!loc) notFound()
 
   const nearbyLocations = LOCATIONS.filter(l => loc.nearby.includes(l.slug))
+  const [heroPhotos, locationPhotos] = await Promise.all([
+    getPhotosByCategory('hero'),
+    getLocationPhotos(slug),
+  ])
+  // Prefer an image placed on this area page; fall back to the shared hero.
+  const heroPhoto = locationPhotos.find(p => p.category === 'work') || locationPhotos[0] || heroPhotos[0]
 
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
@@ -60,8 +74,8 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       {
         '@type': 'LocalBusiness',
         name: 'Ticehurst Grounds & Gardens',
-        url: 'https://www.ticehurstgroundsandgardens.co.uk/',
-        telephone: '+447700000000',
+        url: 'https://www.ticehurstgardens.co.uk/',
+        telephone: '+447989143717',
         email: 'ticehurstgg@gmail.com',
         areaServed: [{ '@type': 'City', name: loc.name, addressRegion: loc.county }],
         serviceType: ['Lawn Care','Garden Maintenance','Hedge and Tree Care','Window Cleaning','Gutter Clearing','Solar Panel Cleaning','Jet Washing','Fencing'],
@@ -78,8 +92,8 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',  item: 'https://www.ticehurstgroundsandgardens.co.uk/' },
-          { '@type': 'ListItem', position: 2, name: 'Areas', item: 'https://www.ticehurstgroundsandgardens.co.uk/areas/' },
+          { '@type': 'ListItem', position: 1, name: 'Home',  item: 'https://www.ticehurstgardens.co.uk/' },
+          { '@type': 'ListItem', position: 2, name: 'Areas', item: 'https://www.ticehurstgardens.co.uk/areas/' },
           { '@type': 'ListItem', position: 3, name: loc.name },
         ],
       },
@@ -92,7 +106,20 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       <Nav />
 
       {/* Hero */}
-      <header className="bg-forest overflow-hidden">
+      <header className="bg-forest overflow-hidden relative">
+        {heroPhoto && (
+          <>
+            <Image
+              src={heroPhoto.url}
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-forest/80" />
+          </>
+        )}
         <div className="max-w-6xl mx-auto px-6 pt-12 pb-0 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start pb-14">
             <div>
@@ -123,7 +150,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
                 <Link href="/quote/" className="flex items-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-moss transition-all">
                   Free quote in {loc.name} <ArrowRight size={13} />
                 </Link>
-                <a href="https://wa.me/447700000000" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-white/10 transition-all">
+                <a href="https://wa.me/447989143717" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-5 py-3 rounded-full hover:bg-white/10 transition-all">
                   WhatsApp Andy
                 </a>
               </div>
@@ -134,34 +161,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest to-sage" />
               <h2 className="font-head font-black text-lg uppercase tracking-wide text-forest mb-1">Free Quote in {loc.name}</h2>
               <p className="text-sm text-bark mb-4">No obligation — Andy visits to give you a fixed price.</p>
-              <form className="space-y-3" action="/contact/thanks" method="POST">
-                <input type="hidden" name="town" value={loc.name} />
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Name *</label>
-                    <input name="name" required placeholder="Your name" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Phone *</label>
-                    <input name="phone" type="tel" required placeholder="07XXX XXXXXX" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Service needed</label>
-                  <select name="service" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors">
-                    <option value="">Select a service…</option>
-                    {ALL_SERVICES.map(s=><option key={s.name}>{s.name}</option>)}
-                    <option>Multiple services</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Tell us more</label>
-                  <textarea name="message" rows={2} placeholder="Any extra details…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors resize-none" />
-                </div>
-                <button type="submit" className="w-full bg-forest text-white font-head font-black text-sm uppercase tracking-wider py-3.5 rounded-full hover:bg-moss transition-all">
-                  Send message
-                </button>
-              </form>
+              <ContactForm town={loc.name} variant="area" />
             </div>
           </div>
         </div>
@@ -198,7 +198,23 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <Wave fromColor="#F4F1EC" toColor="#1C3D2A" path="M0,30 C320,68 680,0 1040,50 C1220,65 1360,20 1440,30 L1440,68 L0,68 Z" height={68} />
+      {/* Gallery */}
+      <GallerySection
+        subheading={`Work in ${loc.name}`}
+        heading={`Our Projects in ${loc.name}`}
+        description={`Recent garden maintenance and exterior cleaning work in ${loc.name}${locationPhotos.length ? '.' : ', photos coming soon.'}`}
+        images={locationPhotos.length ? locationPhotos : undefined}
+        count={4}
+        columns={2}
+        labels={[
+          `Garden work in ${loc.name}`,
+          `Exterior cleaning in ${loc.name}`,
+          `Before & after`,
+          `Finished result`,
+        ]}
+      />
+
+      <Wave fromColor="#FFFFFF" toColor="#1C3D2A" path="M0,30 C320,68 680,0 1040,50 C1220,65 1360,20 1440,30 L1440,68 L0,68 Z" height={68} />
 
       {/* All services in this location */}
       <section className="bg-forest py-14">
@@ -280,7 +296,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
             <Link href="/quote/" className="flex-1 flex items-center justify-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-moss transition-all">
               Get instant estimate
             </Link>
-            <a href="https://wa.me/447700000000" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
+            <a href="https://wa.me/447989143717" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
               WhatsApp Andy
             </a>
           </div>

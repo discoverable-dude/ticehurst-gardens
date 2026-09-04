@@ -1,23 +1,39 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
 import { Star, ArrowRight } from 'lucide-react'
+import { GallerySection } from '@/components/Gallery'
+import { getPhotosByCategory, getPortfolioPhotos } from '@/lib/photos'
 
 export const metadata: Metadata = {
   title: 'About Us | Ticehurst Grounds & Gardens',
   description: '...',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/about/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/about/' },
 }
 
-export default function AboutPage() {
+export const revalidate = 60
+
+export default async function AboutPage() {
+  const [aboutPhotos, portfolioPhotos] = await Promise.all([
+    getPhotosByCategory('about'),
+    getPortfolioPhotos(6),
+  ])
+  const heroPhoto = aboutPhotos[0]
   return (
     <>
       <Nav />
 
-      <header className="bg-forest overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 pt-14 pb-14">
+      <header className="bg-forest overflow-hidden relative">
+        {heroPhoto && (
+          <>
+            <Image src={heroPhoto.url} alt="" fill priority className="object-cover" sizes="100vw" />
+            <div className="absolute inset-0 bg-forest/80" />
+          </>
+        )}
+        <div className="max-w-6xl mx-auto px-6 pt-14 pb-14 relative z-10">
           <nav className="flex items-center gap-2 text-xs text-mid font-medium mb-4">
             <a href="/" className="text-mid hover:text-tlight">Home</a>
             <span className="text-tlight/40">›</span>
@@ -113,6 +129,18 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <Wave fromColor="#FFFFFF" toColor="#FFFFFF" />
+
+      {/* Gallery */}
+      <GallerySection
+        subheading="Our work"
+        heading="The Team in Action"
+        description="A selection of recent work across Kent & East Sussex."
+        images={portfolioPhotos}
+        count={6}
+        columns={3}
+      />
 
       <Footer />
     </>

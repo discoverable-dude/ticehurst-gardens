@@ -1,25 +1,33 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import Wave from '@/components/Wave'
 import Link from 'next/link'
-import { SERVICES, getService } from '@/lib/services'
+import { SERVICES } from '@/lib/services'
+import { getCmsService, getAllServices } from '@/lib/cms'
 import { LOCATIONS } from '@/lib/locations'
 import { CheckCircle2, ChevronRight, ArrowRight, MapPin } from 'lucide-react'
+import ContactForm from '@/components/ContactForm'
+import { GallerySection } from '@/components/Gallery'
+import { getServicePhotos } from '@/lib/photos'
+
+export const revalidate = 60 // revalidate every 60 seconds
 
 export async function generateStaticParams() {
-  return SERVICES.map(s => ({ slug: s.slug }))
+  const services = await getAllServices()
+  return services.map(s => ({ slug: s.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const svc = getService(slug)
+  const svc = await getCmsService(slug)
   if (!svc) return {}
   return {
     title: svc.title,
     description: svc.meta,
-    alternates: { canonical: `https://www.ticehurstgroundsandgardens.co.uk/services/${svc.slug}/` },
+    alternates: { canonical: `https://www.ticehurstgardens.co.uk/services/${svc.slug}/` },
   }
 }
 
@@ -35,11 +43,13 @@ function Stars() {
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const svc = getService(slug)
+  const svc = await getCmsService(slug)
   if (!svc) notFound()
 
   const related = SERVICES.filter(s => s.category === svc.category && s.slug !== svc.slug).slice(0, 3)
   const catLabel = svc.category === 'gardening' ? 'Gardening Service' : 'Exterior Cleaning'
+  const photos = await getServicePhotos(slug)
+  const heroPhoto = photos.find(p => p.category === 'work') || photos.find(p => p.category === 'after') || photos[0]
 
   const schema = JSON.stringify({
     '@context': 'https://schema.org',
@@ -49,8 +59,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         name: svc.name,
         description: svc.intro,
         serviceType: svc.name,
-        url: `https://www.ticehurstgroundsandgardens.co.uk/services/${svc.slug}/`,
-        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgroundsandgardens.co.uk/', telephone: '+447700000000' },
+        url: `https://www.ticehurstgardens.co.uk/services/${svc.slug}/`,
+        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgardens.co.uk/', telephone: '+447989143717' },
         areaServed: [{ '@type': 'AdministrativeArea', name: 'Kent' }, { '@type': 'AdministrativeArea', name: 'East Sussex' }],
       },
       {
@@ -62,8 +72,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgroundsandgardens.co.uk/' },
-          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.ticehurstgroundsandgardens.co.uk/services/' },
+          { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgardens.co.uk/' },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.ticehurstgardens.co.uk/services/' },
           { '@type': 'ListItem', position: 3, name: svc.name },
         ],
       },
@@ -76,7 +86,20 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <Nav />
 
       {/* Hero */}
-      <header className="bg-forest overflow-hidden">
+      <header className="bg-forest overflow-hidden relative">
+        {heroPhoto && (
+          <>
+            <Image
+              src={heroPhoto.url}
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-forest/80" />
+          </>
+        )}
         <div className="max-w-6xl mx-auto px-6 pt-12 pb-0 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start pb-14">
             <div>
@@ -95,7 +118,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 <Link href="/quote/" className="flex items-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-moss transition-all">
                   Get a free quote <ArrowRight size={13} />
                 </Link>
-                <a href="https://wa.me/447700000000" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 transition-all">
+                <a href="https://wa.me/447989143717" className="flex items-center gap-2 bg-transparent text-white border-2 border-white/30 font-head font-black text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:bg-white/10 transition-all">
                   WhatsApp Andy
                 </a>
               </div>
@@ -138,35 +161,30 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-forest to-sage" />
             <h2 className="font-head font-black text-lg uppercase tracking-wide text-forest mb-1">Get a Quote for {svc.name}</h2>
             <p className="text-sm text-bark mb-4">Free, no-obligation. We&apos;ll visit and give you a firm price.</p>
-            <form className="space-y-3" action="/contact/thanks" method="POST">
-              <input type="hidden" name="service" value={svc.name} />
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Name *</label>
-                  <input name="name" required placeholder="Your name" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Phone *</label>
-                  <input name="phone" type="tel" required placeholder="07XXX XXXXXX" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Your town</label>
-                <input name="town" placeholder="e.g. Ashford, Tenterden…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-bold text-forest uppercase tracking-wider">Tell us about your project</label>
-                <textarea name="message" rows={3} placeholder="Describe what you need help with…" className="px-3 py-2.5 border-[1.5px] border-pebble rounded-lg text-sm bg-cream focus:border-sage focus:bg-white outline-none transition-colors resize-none" />
-              </div>
-              <button type="submit" className="w-full bg-forest text-white font-head font-black text-sm uppercase tracking-wider py-3.5 rounded-full hover:bg-moss transition-all">
-                Send message
-              </button>
-            </form>
+            <ContactForm service={svc.name} variant="service" />
           </div>
         </div>
       </section>
 
       <Wave fromColor="#F4F1EC" toColor="#FFFFFF" />
+
+      {/* Gallery */}
+      <GallerySection
+        subheading={`${svc.name} gallery`}
+        heading={`${svc.name} — Our Work`}
+        description={`Recent ${svc.name.toLowerCase()} projects across Kent & East Sussex.`}
+        images={photos}
+        count={4}
+        columns={2}
+        labels={[
+          `${svc.name} — before`,
+          `${svc.name} — after`,
+          `${svc.name} in progress`,
+          `Finished result`,
+        ]}
+      />
+
+      <Wave fromColor="#FFFFFF" toColor="#FFFFFF" />
 
       {/* FAQ */}
       <section className="bg-white py-14">
@@ -261,7 +279,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <Link href="/quote/" className="flex-1 flex items-center justify-center gap-2 bg-sage text-white font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-moss transition-all">
               Get instant estimate
             </Link>
-            <a href="https://wa.me/447700000000" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
+            <a href="https://wa.me/447989143717" className="flex-1 flex items-center justify-center gap-2 bg-white text-forest font-head font-black text-sm uppercase tracking-wider px-6 py-3.5 rounded-full hover:bg-mist transition-all">
               WhatsApp Andy
             </a>
           </div>
