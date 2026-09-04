@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: svc.title,
     description: svc.meta,
-    alternates: { canonical: `https://www.ticehurstgroundsandgardens.co.uk/services/${svc.slug}/` },
+    alternates: { canonical: `https://www.ticehurstgardens.co.uk/services/${svc.slug}/` },
   }
 }
 
@@ -59,8 +59,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         name: svc.name,
         description: svc.intro,
         serviceType: svc.name,
-        url: `https://www.ticehurstgroundsandgardens.co.uk/services/${svc.slug}/`,
-        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgroundsandgardens.co.uk/', telephone: '+447989143717' },
+        url: `https://www.ticehurstgardens.co.uk/services/${svc.slug}/`,
+        provider: { '@type': 'LocalBusiness', name: 'Ticehurst Grounds & Gardens', url: 'https://www.ticehurstgardens.co.uk/', telephone: '+447989143717' },
         areaServed: [{ '@type': 'AdministrativeArea', name: 'Kent' }, { '@type': 'AdministrativeArea', name: 'East Sussex' }],
       },
       {
@@ -72,8 +72,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgroundsandgardens.co.uk/' },
-          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.ticehurstgroundsandgardens.co.uk/services/' },
+          { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgardens.co.uk/' },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.ticehurstgardens.co.uk/services/' },
           { '@type': 'ListItem', position: 3, name: svc.name },
         ],
       },

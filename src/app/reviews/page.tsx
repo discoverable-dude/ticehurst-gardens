@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     'Read what our customers say about Ticehurst Grounds & Gardens. Five-star garden maintenance and exterior cleaning across Kent & East Sussex.',
   alternates: {
-    canonical: 'https://www.ticehurstgroundsandgardens.co.uk/reviews/',
+    canonical: 'https://www.ticehurstgardens.co.uk/reviews/',
   },
 }
 
@@ -45,7 +45,7 @@ export default async function ReviewsPage() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'Ticehurst Grounds & Gardens',
-    url: 'https://www.ticehurstgroundsandgardens.co.uk/',
+    url: 'https://www.ticehurstgardens.co.uk/',
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '5',

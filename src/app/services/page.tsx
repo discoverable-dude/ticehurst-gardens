@@ -8,28 +8,28 @@ import { Leaf, Sprout, TreePine, Trash2, Flower2, Fence, Square, Home as HomeIco
 export const metadata: Metadata = {
   title: 'All Services — Garden Maintenance & Exterior Cleaning Kent | Ticehurst Grounds & Gardens',
   description: 'Garden maintenance and exterior cleaning across Kent & East Sussex. Lawn care, window cleaning, gutter clearing, jet washing, solar panels & more. Free quotes.',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/services/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/services/' },
 }
 
 const schema = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
     { '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgroundsandgardens.co.uk/' },
+      { '@type': 'ListItem', position: 1, name: 'Home',     item: 'https://www.ticehurstgardens.co.uk/' },
       { '@type': 'ListItem', position: 2, name: 'Services' },
     ]},
     { '@type': 'ItemList', name: 'Services offered by Ticehurst Grounds & Gardens',
       itemListElement: [
-        { '@type':'ListItem', position:1,  name:'Lawn Care',                 url:'https://www.ticehurstgroundsandgardens.co.uk/services/lawn-care/' },
-        { '@type':'ListItem', position:2,  name:'Garden Maintenance',        url:'https://www.ticehurstgroundsandgardens.co.uk/services/garden-maintenance/' },
-        { '@type':'ListItem', position:3,  name:'Hedge & Tree Care',         url:'https://www.ticehurstgroundsandgardens.co.uk/services/hedge-tree-care/' },
-        { '@type':'ListItem', position:4,  name:'Garden Clearances',         url:'https://www.ticehurstgroundsandgardens.co.uk/services/garden-clearances/' },
-        { '@type':'ListItem', position:5,  name:'Window Cleaning',           url:'https://www.ticehurstgroundsandgardens.co.uk/services/window-cleaning/' },
-        { '@type':'ListItem', position:6,  name:'Gutter Clearing',           url:'https://www.ticehurstgroundsandgardens.co.uk/services/gutter-clearing/' },
-        { '@type':'ListItem', position:7,  name:'Solar Panel Cleaning',      url:'https://www.ticehurstgroundsandgardens.co.uk/services/solar-panel-cleaning/' },
-        { '@type':'ListItem', position:8,  name:'Jet Washing',               url:'https://www.ticehurstgroundsandgardens.co.uk/services/jet-washing/' },
-        { '@type':'ListItem', position:9,  name:'Fencing',                   url:'https://www.ticehurstgroundsandgardens.co.uk/services/fencing/' },
-        { '@type':'ListItem', position:10, name:'Conservatory Cleaning',     url:'https://www.ticehurstgroundsandgardens.co.uk/services/conservatory-cleaning/' },
+        { '@type':'ListItem', position:1,  name:'Lawn Care',                 url:'https://www.ticehurstgardens.co.uk/services/lawn-care/' },
+        { '@type':'ListItem', position:2,  name:'Garden Maintenance',        url:'https://www.ticehurstgardens.co.uk/services/garden-maintenance/' },
+        { '@type':'ListItem', position:3,  name:'Hedge & Tree Care',         url:'https://www.ticehurstgardens.co.uk/services/hedge-tree-care/' },
+        { '@type':'ListItem', position:4,  name:'Garden Clearances',         url:'https://www.ticehurstgardens.co.uk/services/garden-clearances/' },
+        { '@type':'ListItem', position:5,  name:'Window Cleaning',           url:'https://www.ticehurstgardens.co.uk/services/window-cleaning/' },
+        { '@type':'ListItem', position:6,  name:'Gutter Clearing',           url:'https://www.ticehurstgardens.co.uk/services/gutter-clearing/' },
+        { '@type':'ListItem', position:7,  name:'Solar Panel Cleaning',      url:'https://www.ticehurstgardens.co.uk/services/solar-panel-cleaning/' },
+        { '@type':'ListItem', position:8,  name:'Jet Washing',               url:'https://www.ticehurstgardens.co.uk/services/jet-washing/' },
+        { '@type':'ListItem', position:9,  name:'Fencing',                   url:'https://www.ticehurstgardens.co.uk/services/fencing/' },
+        { '@type':'ListItem', position:10, name:'Conservatory Cleaning',     url:'https://www.ticehurstgardens.co.uk/services/conservatory-cleaning/' },
       ],
     },
   ],

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.ticehurstgroundsandgardens.co.uk'),
+  metadataBase: new URL('https://www.ticehurstgardens.co.uk'),
   title: {
     template: '%s | Ticehurst Grounds & Gardens',
     default: 'Ticehurst Grounds & Gardens | Gardeners & Exterior Cleaning Kent & East Sussex',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Professional garden maintenance and exterior cleaning across Kent & East Sussex. Free no-obligation quotes.',
   openGraph: { locale: 'en_GB', type: 'website', siteName: 'Ticehurst Grounds & Gardens' },
   twitter: { card: 'summary_large_image' },
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `Garden Maintenance & Exterior Cleaning in ${loc.name}, ${loc.county}`,
     description: `Professional gardening and exterior cleaning in ${loc.name}, ${loc.county}. Lawn care, window cleaning, gutter clearing, solar panels & more. Free quotes.`,
-    alternates: { canonical: `https://www.ticehurstgroundsandgardens.co.uk/areas/${loc.slug}/` },
+    alternates: { canonical: `https://www.ticehurstgardens.co.uk/areas/${loc.slug}/` },
   }
 }
 
@@ -70,7 +70,7 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       {
         '@type': 'LocalBusiness',
         name: 'Ticehurst Grounds & Gardens',
-        url: 'https://www.ticehurstgroundsandgardens.co.uk/',
+        url: 'https://www.ticehurstgardens.co.uk/',
         telephone: '+447989143717',
         email: 'ticehurstgg@gmail.com',
         areaServed: [{ '@type': 'City', name: loc.name, addressRegion: loc.county }],
@@ -88,8 +88,8 @@ export default async function AreaPage({ params }: { params: Promise<{ slug: str
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home',  item: 'https://www.ticehurstgroundsandgardens.co.uk/' },
-          { '@type': 'ListItem', position: 2, name: 'Areas', item: 'https://www.ticehurstgroundsandgardens.co.uk/areas/' },
+          { '@type': 'ListItem', position: 1, name: 'Home',  item: 'https://www.ticehurstgardens.co.uk/' },
+          { '@type': 'ListItem', position: 2, name: 'Areas', item: 'https://www.ticehurstgardens.co.uk/areas/' },
           { '@type': 'ListItem', position: 3, name: loc.name },
         ],
       },

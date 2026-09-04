@@ -8,7 +8,7 @@ import { MapPin, ArrowRight } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'Areas We Cover — Kent & East Sussex | Ticehurst Grounds & Gardens',
   description: '...',
-  alternates: { canonical: 'https://www.ticehurstgroundsandgardens.co.uk/areas/' },
+  alternates: { canonical: 'https://www.ticehurstgardens.co.uk/areas/' },
 }
 
 const AREAS = [
